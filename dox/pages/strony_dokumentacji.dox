@@ -1,0 +1,52 @@
+/*!
+  \mainpage  Interpreter poleceń dla obiektów mobilnych
+
+   Interpreter poleceń stworzony jest na potrzeby symulacji ...
+
+
+  \section etykieta_prog_czynnosci Działanie programu
+
+  \image html diagram_czynnosci__interpretacja_polecen.svg "Diagram czynności procedury czytania opisu akcji i ich wykonywania"
+  \n
+  \n
+
+
+  \section etykieta_prog_interp Program interpetera poleceń
+
+  \image html diagram_klas__interpreter.svg "Wstępny diagram klas programu interpretera"
+  \n
+  \n
+  
+  \section etykieta_wtyczki Interpretery poleceń
+  
+  \image html diagram_klas__polecenie.svg "Wstępny diagram klas intepreterów poszczególnych poleceń"
+
+ */
+
+/*!
+
+  \page strona_glowna Sposób działania interpreta
+
+  \tableofcontents
+
+  \section etykieta_zalozenia Podstawowe założenia
+
+   Interpreter poleceń polecania z pliku, w którym 
+   mogą być występować definicje symboli makr w sensie
+   języka C, jak też komentarze o budowie właściwej dla tego
+   języka.
+
+
+ \section etykieta_algorytm Opis algorytmu działania
+
+ Ponieżej przedstawiona jest podstawowa pętli przebiegu
+ procesu interpretacji listy poleceń.
+
+  \image html diagram_czynnosci.png "Ogólny diagram czynności programu"
+
+ \section etykieta_wzytywanie_i_interp Wczytywanie i interpretacja poleceń
+ 
+ \image html diagram_czynnosci__interpretacja_polecen.svg "Diagram czynności dla operacji wczytywania i interpretacji poleceń"
+
+
+*/
