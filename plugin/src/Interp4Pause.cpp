@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Interp4Rotate.hh"
+#include "Interp4Pause.hh"
 
 
 using std::cout;
@@ -8,7 +8,7 @@ using std::endl;
 
 extern "C" {
   AbstractInterp4Command* CreateCmd(void);
-  const char* GetCmdName() { return "Rotate"; }
+  const char* GetCmdName() { return "Pause"; }
 }
 
 
@@ -21,21 +21,21 @@ extern "C" {
  */
 AbstractInterp4Command* CreateCmd(void)
 {
-  return Interp4Rotate::CreateCmd();
+  return Interp4Pause::CreateCmd();
 }
 
 
 /*!
  *
  */
-Interp4Rotate::Interp4Rotate(): _Speed_mmS(0)
+Interp4Pause::Interp4Pause(): _Speed_mmS(0)
 {}
 
 
 /*!
  *
  */
-void Interp4Rotate::PrintCmd() const
+void Interp4Pause::PrintCmd() const
 {
   /*
    *  Tu trzeba napisać odpowiednio zmodyfikować kod poniżej.
@@ -47,7 +47,7 @@ void Interp4Rotate::PrintCmd() const
 /*!
  *
  */
-const char* Interp4Rotate::GetCmdName() const
+const char* Interp4Pause::GetCmdName() const
 {
   return ::GetCmdName();
 }
@@ -56,7 +56,7 @@ const char* Interp4Rotate::GetCmdName() const
 /*!
  *
  */
-bool Interp4Rotate::ExecCmd( AbstractScene      &rScn, 
+bool Interp4Pause::ExecCmd( AbstractScene      &rScn, 
                            const char         *sMobObjName,
    AbstractComChannel &rComChann
  )
@@ -71,7 +71,7 @@ bool Interp4Rotate::ExecCmd( AbstractScene      &rScn,
 /*!
  *
  */
-bool Interp4Rotate::ReadParams(std::istream& Strm_CmdsList)
+bool Interp4Pause::ReadParams(std::istream& Strm_CmdsList)
 {
   /*
    *  Tu trzeba napisać odpowiedni kod.
@@ -83,16 +83,16 @@ bool Interp4Rotate::ReadParams(std::istream& Strm_CmdsList)
 /*!
  *
  */
-AbstractInterp4Command* Interp4Rotate::CreateCmd()
+AbstractInterp4Command* Interp4Pause::CreateCmd()
 {
-  return new Interp4Rotate();
+  return new Interp4Pause();
 }
 
 
 /*!
  *
  */
-void Interp4Rotate::PrintSyntax() const
+void Interp4Pause::PrintSyntax() const
 {
-  cout << "Rotate nazwa_obiektu nazwa_osi szybko±¢_k¡towa k¡t_obrotu" << endl;
+  cout << "Pause Czas_pauzy_ms" << endl;
 }

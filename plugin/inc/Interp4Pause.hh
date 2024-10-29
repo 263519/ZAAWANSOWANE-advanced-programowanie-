@@ -1,5 +1,5 @@
-#ifndef  COMMAND4ROTATE_HH
-#define  COMMAND4ROTATE_HH
+#ifndef  COMMAND4PAUSE_HH
+#define  COMMAND4PAUSE_HH
 
 #ifndef __GNUG__
 # pragma interface
@@ -10,9 +10,9 @@
 
 /*!
  * \file
- * \brief Definicja klasy Interp4Rotate
+ * \brief Definicja klasy Interp4Pause
  *
- * Plik zawiera definicję klasy Interp4Rotate ...
+ * Plik zawiera definicję klasy Interp4Pause ...
  */
 
 /*!
@@ -20,7 +20,7 @@
  *
  *  Klasa modeluj47e ...
  */
-class Interp4Rotate: public AbstractInterp4Command {
+class Interp4Pause: public AbstractInterp4Command {
   /*
    *  Tu należy zdefiniować pola, które są niezbędne
    *  do przechowywania wartości parametrów danego polecenia.
@@ -31,7 +31,7 @@ class Interp4Rotate: public AbstractInterp4Command {
   /*!
    * \brief
    */
-  Interp4Rotate();  
+  Interp4Pause();  
   /*!
    * \brief Wyświetla postać bieżącego polecenia (nazwę oraz wartości parametrów)
    */
