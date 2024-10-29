@@ -1,11 +1,37 @@
 #include <iostream>
 #include <dlfcn.h>
 #include <cassert>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <cstdio>
 #include "AbstractInterp4Command.hh"
+
 
 using namespace std;
 
-int main() {
+
+
+#define LINE_SIZE 500
+bool ExecPreprocesor( const char *FileName, istringstream &IStrm4Cmds )
+{
+    string Cmd4Preproc = "cpp -P";
+    char Line[LINE_SIZE];
+    ostringstream OTmpStrm;
+    Cmd4Preproc += FileName;
+    FILE *pProc = popen(Cmd4Preproc.c_str(),"r");
+
+    if (!pProc) return false;
+    while (fgets(Line,LINE_SIZE,pProc)) {
+        OTmpStrm << Line;
+    }
+
+    IStrm4Cmds.str(OTmpStrm.str());
+    return pclose(pProc) == 0;
+}
+
+int main(int argc, char *argv[]) {
+
     void *pLibHnd_Move = dlopen("libInterp4Move.so", RTLD_LAZY);
     AbstractInterp4Command *(*pCreateCmd_Move)(void);
     void *pFun;
@@ -117,6 +143,7 @@ int main() {
 
     delete pCmd_Pause;
     dlclose(pLibHnd_Pause);
+ 
 
     return 0;
 }
