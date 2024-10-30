@@ -1,4 +1,4 @@
-#ifndef  PLUGINSSTRUCTURE_HH
+#ifndef  PLUGINSSTRUCTURE_HH //ZMIENIC
 #define  PLUGINSSTRUCTURE_HH
 
 #ifndef __GNUG__
@@ -11,13 +11,13 @@
 
 /*!
  * \file
- * \brief Definicja klasy Interp4Move
+ * \brief Definicja klasy I//ZMIENIC
  *
- * Plik zawiera definicję klasy Interp4Move ...
+ * Plik zawiera definicję klasy //ZMIENIC ...
  */
 
 /*!
- * \brief Modeluje polecenie dla robota mobilnego, które wymusza jego ruch do przodu
+ * \brief ZMIENIC
  *
  *  Klasa modeluj47e ...
  */
