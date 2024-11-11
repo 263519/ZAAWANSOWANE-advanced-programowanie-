@@ -22,6 +22,11 @@ public:
 
     std::shared_ptr<LibInterface> GetLibInterface(const std::string& cmdName) const {
         auto it = _LibMap.find(cmdName);
+        if(it != _LibMap.end())
+            std::cout<<"Znaleziono wtyczke!\n";
+        else
+            std::cout<<"Brak wtyczki!\n";
+
         return (it != _LibMap.end()) ? it->second : nullptr;
     }
 };

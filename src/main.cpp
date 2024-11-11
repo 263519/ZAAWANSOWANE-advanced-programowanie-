@@ -36,10 +36,10 @@ bool ExecPreprocesor( const char *FileName, istringstream &IStrm4Cmds )
 
 int main(int argc, char **argv)
 {
-    // Create an instance of the Set4LibInterfaces class
+    
     Set4LibInterfaces libInterfaces;
 
-    // Create shared pointers to LibInterface objects for different commands
+    
     auto rotate = std::make_shared<LibInterface>();
     auto move = std::make_shared<LibInterface>();
     auto set = std::make_shared<LibInterface>();
@@ -48,7 +48,27 @@ int main(int argc, char **argv)
 
 
     rotate->Init("Rotate");
-    
+    move->Init("Move");
+    set->Init("Set");
+    pause->Init("Pause");
+
+
+
+    libInterfaces.AddLibInterface(rotate->GetCmdName(),rotate);
+    libInterfaces.AddLibInterface(move->GetCmdName(),move);
+    libInterfaces.AddLibInterface(set->GetCmdName(),set);
+    libInterfaces.AddLibInterface(pause->GetCmdName(),pause);
+   
+    auto m = libInterfaces.GetLibInterface("Move");
+    auto s = libInterfaces.GetLibInterface("Set");
+    auto r = libInterfaces.GetLibInterface("Rotate");
+    auto p = libInterfaces.GetLibInterface("Pause");
+
+    m->CreateCmd()->PrintCmd();
+    s->CreateCmd()->PrintCmd();
+    r->CreateCmd()->PrintCmd();
+    p->CreateCmd()->PrintCmd();
+   
 
     return 0;
 }
