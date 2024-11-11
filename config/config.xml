@@ -1,0 +1,16 @@
+  <Config>
+   <Plugins>
+      <Lib Name="libInter4Move.so"/>
+      <Lib Name="libInter4Rotate.so"/>
+      <Lib Name="libInter4Pause.so"/>
+   </Plugins>
+   <Objects>
+     <Cube Name="Podstawa" Shift="0 -0.5 0" Scale="0.7 0.7 0.2"
+                 RotXYZ_deg="10 0 0" Trans_m="0.1 0 0" RGB="0 0 255"/>
+     <Cube Name="Podstawa.Ramie1" Shift="0 -0.5 0" Scale="0.1 0.1 0.6"
+	                                                 Trans_m="0 0.7 0"/>
+     <Cube Name="Podstawa.Ramie1.Ramie2" Shift="0 -0.5 0"
+	         Scale="0.1 0.1 0.6" Trans_m="0 0.7 0"/>
+   </Objects>
+  </Config>
+  

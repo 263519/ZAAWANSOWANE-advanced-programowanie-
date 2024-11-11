@@ -1,0 +1,7 @@
+Poniżej znajdują się adresy stron udostępniających
+weryfikatory poprawności zapisu gramatyki w pliku XSD,
+jak też poprawności zapisu pliku XML z uwzględnieniem
+danej gramatyki w pliku XSD.
+
+https://www.utilities-online.info/xsdvalidation
+https://www.freeformatter.com/xml-validator-xsd.html

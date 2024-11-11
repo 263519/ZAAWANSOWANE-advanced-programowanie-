@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+
+  <xs:complexType name="Type4Cube">
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="Shift" type="xs:string" default="0 0 0"/>
+    <xs:attribute name="Scale" type="xs:string" default="1 1 1"/>
+    <xs:attribute name="RotXYZ_deg" type="xs:string" default="0 0 0"/>
+    <xs:attribute name="Trans_m" type="xs:string" default="0 0 0"/>
+    <xs:attribute name="RGB" type="xs:string" default="128 128 128"/>
+ </xs:complexType>
+
+
+ 
+ <xs:complexType name="Type4Objects">
+   <xs:sequence>
+      <xs:element name="Cube" type="Type4Cube"
+                                    minOccurs="1" maxOccurs="unbounded"/>  
+    </xs:sequence>  
+ </xs:complexType>
+
+ 
+
+ <xs:complexType name="Type4Lib">
+    <xs:attribute name="Name" type="xs:string"/>
+ </xs:complexType>
+
+
+
+ <xs:complexType name="Type4Plugins">
+   <xs:sequence>
+      <xs:element name="Lib" type="Type4Lib"
+                                    minOccurs="1" maxOccurs="unbounded"/>  
+    </xs:sequence>  
+ </xs:complexType>
+
+
+
+ <xs:complexType name="Type4Config">
+   <xs:sequence>
+     <xs:element name="Plugins" type="Type4Plugins"
+                                    minOccurs="1" maxOccurs="1"/>
+     <xs:element name="Objects" type="Type4Objects"
+                                    minOccurs="1" maxOccurs="1"/>	    
+    </xs:sequence>
+ </xs:complexType>
+
+
+ <xs:element name="Config" type="Type4Config"/>
+
+</xs:schema>

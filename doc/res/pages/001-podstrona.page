@@ -1,0 +1,9 @@
+/*!
+ *\page dodatkowa-strona Dodatkowa strona z informacjami
+ *   \anchor others
+ *
+ * \section przyklad-inny Przykład dodatkowej strony
+ * 
+ *  To jest jedynie przykład jak można dodać do dokumentacji
+ *  dodatkowy opis.
+ */
