@@ -1,0 +1,165 @@
+/*!
+
+ \mainpage Serwer graficzny Sefi
+
+ \author Bogdan Kreczmer
+ \date   2021.11.13
+ \version 0.1.0
+
+ \section sec-wprowadzenie Cel i przeznaczenie
+
+ Serwer graficzny \b Sefi został zrealizowany na potrzeby zajęć
+ dydaktycznych z kursu "Zaawansowane Metody Programowania"
+ prowadzonym na IV roku specjalności Robotyka kierunku Automatyka i Robotyka.
+ Serwer przeznaczony jest do wizualizacji i animacji ruchu brył
+ i ich łańcuchów kinematycznych.
+
+ \section sec-Info Informacje ogólne
+
+ Kompilacja serwera wymaga zainstalowania:
+    \li biblioteki Qt5,
+    \li biblioteki QGLViewer-qt5 (pakiety: libqglviewer2-qt5, libqglviewer-dev-qt5,
+                                   libqglviewer-headers),
+    \li biblioteki SOIL (pakiety: libsoil-dev, libsoil1).
+ 
+
+ Po uruchomieniu serwer nasłuchuje na porcie nr 6217. Komunikacja z serwerem realizowana
+ jest w trybie tekstowym. Polecenie dla serwera rozumiane jest jako
+ test zakończony znakiem przejścia do nowej linii. Pełni on rolę terminatora
+ linii polecenia. Ze względu na to, że komunikacja z serwerem odbywa się
+ w trybie tekstowym można ją realizować z wykorzystaniem programu
+ \p telnet. Poniżej przedstawiony jest przykład wywołania programu
+ przy założeniu, że serwer uruchomiony jest na tym samym komputerze.
+ \verbatim
+    telnet 127.0.0.1 6217
+ \endverbatim
+ Zamknięcie połączenia i zakończenie pracy programu \p telnet nastąpi po naciśnięciu
+ sekwencji klawiszy \p Ctrl-C.
+
+
+ \section sec-Polecenia Polecenia serwera.
+
+ Serwer umożliwia dodanie prostopadłościanu. Prostopadłościany mogą zostać
+ ułożone w powiązane łańcuchy kinematyczne. Nie ma jawnych ograniczeń co do liczby
+ ogniw w danym łańcuch, jak też ilości rozgałęzień danego łańcucha.
+ Jedynym ograniczeniem jest dostępność pamięci komputera.
+ Ponadto serwer pozwala na aktualizację parametrów obiektów (położenie, rotację, kolor itd.).
+ 
+
+ Serwer akceptuje cztery polecenia, tj. \p AddObj (dodanie obiektu),
+ \p UpdateObj (aktualizacja parametrów obiektu),
+ \p Clear (usunięcie wszystkich elementów sceny),
+ \p Close (zakończenie połączenia). Poniżej
+ przedstawiona jest składnia poszczególnych poleceń.
+
+ \subsection subsec-AddObj  Polecenie AddObj
+
+ Polecenie to pozwala w scenie wstawić nowy obiekt i zadań jego parametry.
+ Może on zostać dodany do sceny jako samodzielny obiekt lub jako element
+ istniejącego już łańcucha kinematycznego.
+ Składnia polecenia ma postać:
+ \n
+\htmlonly
+    <p style="color:blue; font-size:15px">
+    <tt>AddObj Name=<i>Kwalifikowana_Nazwa_Obiektu</i> {<i> Parametry_i_Wartości </i>} \n </tt>
+    </p>
+\endhtmlonly
+Znak '\\n' symbolizuje sekwencję znaków przejścia do nowej linii.
+Spacje między ostatnim parametrem, a znakiem przejście do nowej linii nie są wymagane
+w żadnym z poleceń. Kolejność parametrów jest dowolna.
+Kwalifikowana nazwa obiektu jest obligatoryjna. Składa się on z ciągu znaków \e niebiałych.
+Nazwa pojedynczego obiektu nie może zawierać znaku kropki ('.'), który pełni rolę separatora.
+Pragnąc lepiej zobrazować postać i znaczenie tego typu nazwy
+załóżmy, że na scenie znajdują się trzy obiekty o nazwach własnych:
+<span style="color:darkGreen">Podstawa</span>,
+<span style="color:darkGreen">Ramie1</span> oraz
+<span style="color:darkGreen">Ramie2</span>.
+Załóżmy dalej, że obiekty te tworzą łańcuch kinematyczny
+<span style="color:darkGreen">Podstawa-Ramie1-Ramie2</span>.
+Pełne kwalifikowane nazwy tych obiektów to:
+\htmlonly
+    <p style="color:darkGreen; font-size:15px">
+    <tt>Podstawa</tt><br>
+    <tt>Podstawa.Ramie1</tt><br>
+    <tt>Podstawa.Ramie1.Ramie2</tt>
+    </p>
+\endhtmlonly
+Parametry opisujące geometrię obiektu są opcjonalne. Jeżeli nie wystąpią one
+w liście parametrów, to przyjmowane są wartości domyślne.
+Parametry te mają następującą postać:
+\li <span style="color:blue">Shift=(<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>)</span> -
+    dodawane obiekty są jednostkowymi sześcianami, których lokalny układ współrzędnych
+     umieszczony jest w ich geometrycznym środku. Parametr <span style="color:blue">Shift</span>
+     umożliwia jego przesunięcie. Wartością tego parametru jest wektor przesunięcia.
+     Jego współrzędne <span style="color:blue"><i>L<sub>w</sub></i></span> są
+     dowolnymi liczbami wymiernymi. Domyślną wartością tego parametru jest
+     jest wektor (0,0,0).
+
+\li <span style="color:blue">Scale=(<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>)</span> - Zawiera współczynniki skali względem poszczególnych
+  osi. Wartości te nie mogą być ujemne.  Domyślną wartością tego parametru jest
+     jest wektor (1,1,1).
+
+\li <span style="color:blue">RotXYZ_deg=(<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>)</span> - zawiera wartości kątów rotacji, odpowiednio wokół osi
+  <i>OX</i>, <i>OY</i> i <i>OZ</i>. Wartości kątów wyrażone są w stopniach.
+  Domyślną wartością tego parametru jest jest wektor (0,0,0).
+
+\li <span style="color:blue">Trans_m=(<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>,<i>L<sub>w</sub></i>)</span> - wektor przesunięcia, który określa położenie obiektu w lokalnym układzie współrzędnych.
+          Przyjmuje się umownie, że współrzędne wyrażone są w metrach.
+	  Domyślną wartością tego parametru jest jest wektor (0,0,0).
+
+\li <span style="color:blue">RGB=(<i>L<sub>c</sub></i>,<i>L<sub>c</sub></i>,<i>L<sub>c</sub></i>)</span> - określa kolor obiektu we współrzędnych RGB. Współrzędne tego wektora
+        mogą być tylko wartości całkowite mieszczące się w przedziale [0,255].
+        Domyślną wartością tego parametru jest jest wektor (128,128,128).
+
+Poniżej znajduje się przykład trzech poleceń, które <i>budują</i> ramię robota.
+Należy zauważyć, że ich kolejność jest istotna. Chcąc umieścić kolejny
+element w łańcuchu kinematycznym, wcześniejsze muszą już istnieć.
+ \n
+\htmlonly
+    <p style="color:blue; font-size:12px">
+    <tt>AddObj Name=Podstawa Scala=(0.5,0.5,0.15) \n <br>
+     AddObj Name=Podstawa.Ramie1 Shift=(-0.5,0,0) Scala=(1,0.3,0.3) Trans_m(0.15,0,0) RotXYZ_deg=(-90,0,0)\n <br>
+     AddObj Name=Podstawa.Ramie1.Ramie2 Shift=(-0.5,0,0) Scala=(0.8,0.3,0.3) Trans_m(1,0,0) RotXYZ_deg=(90,0,0)\n
+    </tt></p>
+\endhtmlonly
+
+ \subsection subsec-UpdateObj  Polecenie UpdateObj
+
+ Polecenie to może być wykonane tylko i wyłącznie dla istniejących już obiektów na scenie.
+ Powoduje ono aktualizację parametrów. Jego postać i lista parametrów jest
+ identyczna z poleceniem \p AddObj. Składnia polecenia przedstawiona jest poniżej.
+\htmlonly
+    <p style="color:blue; font-size:15px">
+    <tt>UpdateObj Name=<i>Kwalifikowana_Nazwa_Obiektu</i> {<i> Parametry_i_Wartości </i>} \n </tt>
+    </p>
+\endhtmlonly
+
+
+\subsection subsec-Clear  Polecenie Clear
+
+ Polecenie to powoduje usunięcie wszystkich obiektów ze sceny.
+ Składa się ono tylko z jednego
+ wyrazu, jak niżej.
+\htmlonly
+    <p style="color:blue; font-size:15px">
+    <tt>Clear \n </tt>
+    </p>
+\endhtmlonly
+Spacje między słowem, a znakiem przejście do nowej linii nie są wymagane w żadnym z poleceń.
+
+
+\subsection subsec-Close  Polecenie Close
+
+ Polecenie to powoduje zamknięcie połączenia z serwerem. Aplikacja przed zakończeniem swojej
+ pracy obligatoryjnie powinna wysłać to polecenie do serwera. Składa się ono tylko z jednego
+ wyrazu, jak niżej.
+\htmlonly
+    <p style="color:blue; font-size:15px">
+    <tt>Close \n </tt>
+    </p>
+\endhtmlonly
+Spacje między słowem, a znakiem przejście do nowej linii nie są wymagane w żadnym z poleceń.
+
+
+
+*/

@@ -21,7 +21,7 @@
   class AbstractScene {
        public:
 
-    virtual ~AbstractScene() {}
+        virtual ~AbstractScene() {}
     
        /*!
         * \brief Wyszukuje obiekt o podanej pełnej kwalifikowanej nazwie.

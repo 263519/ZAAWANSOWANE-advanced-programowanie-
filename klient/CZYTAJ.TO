@@ -1,0 +1,9 @@
+Numer portu komunikacyjnego znajduje się w pliku: Port.hh
+Plik "AccessControl.hh" zawiera definicję klasy, której
+użycie jest zalecane do przedefiniownia metody
+
+bool Interp4Command::ExecCmd(MobileObj *pObMob, int Socket);
+
+na
+
+bool Interp4Command::ExecCmd(MobileObj *pObMob, AccessControl *pAccCtrl);

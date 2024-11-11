@@ -6,20 +6,16 @@
 #include <string>
 #include <memory>
 
-
 class Scene : public AbstractScene {
 public:
+    Scene();  
+    virtual ~Scene();  
 
-    Scene() = default;
-
-    virtual ~Scene() {}
-
-    virtual AbstractMobileObj* FindMobileObj(const char *sName) override;
-
-    virtual void AddMobileObj(AbstractMobileObj *pMobObj) override;
+    virtual AbstractMobileObj* FindMobileObj(const char *sName) override;  
+    virtual void AddMobileObj(AbstractMobileObj *pMobObj) override;  
 
 private:
-    std::map<std::string, std::shared_ptr<AbstractMobileObj>> _Set_MobileObjs; 
+    std::map<std::string, std::shared_ptr<AbstractMobileObj>> _Set_MobileObjs;  
 };
 
 #endif // SCENE_HH
