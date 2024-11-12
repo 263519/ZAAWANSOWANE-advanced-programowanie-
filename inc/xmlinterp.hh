@@ -10,11 +10,18 @@
 #include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
 #include "Set4LibInterfaces.hh"
+#include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/sax/InputSource.hpp>
 
 //XERCES_CPP_NAMESPACE_USE
 
 #include "Configuration.hh"
-
+#include "Scene.hh"
+#include "Cuboid.hh"
 
 /*!
  * \brief Implementuje reakcje na napotkane elementu opisu akcji
@@ -27,7 +34,7 @@ class XMLInterp4Config : public xercesc::DefaultHandler {
    /*!
     * \brief Inicjalizuje obiekt i kojarzy go z listą poleceń robota
     */
-  XMLInterp4Config(Set4LibInterfaces &libSet);
+  XMLInterp4Config(Set4LibInterfaces &libSet, Scene &scene);
 
    /*!
     * \brief Wywoływana jest na początku dokumentu
@@ -85,7 +92,8 @@ class XMLInterp4Config : public xercesc::DefaultHandler {
      */
     void ProcessCubeAttrs(const xercesc::Attributes&   rAttrs); 
   private:
-    Set4LibInterfaces _libSet;
+    Set4LibInterfaces &_libSet;
+    Scene &_scene;
 };
 
 #endif

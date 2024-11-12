@@ -96,7 +96,7 @@ namespace geom {
         _Coord[1] = y;
         _Coord[2] = z;
     }
-
+  
     
    Type  &operator [](unsigned int Ind) { assert(Ind < Size); return _Coord[Ind]; }
 
@@ -443,6 +443,17 @@ std::ostream & operator << ( std::ostream &OStrm, const geom::Vector<Type,Size> 
    return OStrm;
 }
 
+template<typename Type, unsigned int Size>
+inline
+std::istream& operator>>(std::istream& is, geom::Vector<Type,Size>& V) {
+    double x, y, z;
+    char delimiter;
 
+    is >> delimiter >> x >> delimiter >> y >> delimiter >> z >> delimiter;
+    V[0] = x;
+    V[1] = y;
+    V[2] = z;
+    return is;
+}
 
 #endif

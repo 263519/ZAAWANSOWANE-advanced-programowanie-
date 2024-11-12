@@ -16,7 +16,7 @@ private:
 
 public:
     
-    bool Read_XML_Config(const char *FileName);
+    bool Read_XML_Config(const char *FileName, Set4LibInterfaces &libSet,  Scene &scene);
     bool ExecProgram(const char *FileName_Prog);
 };
 

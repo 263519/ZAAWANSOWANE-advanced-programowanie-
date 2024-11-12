@@ -152,7 +152,22 @@ int main (int argc, char* args[])
 //   // Thread4Sending.join();
 //   // close(Socket4Sending);
 
+
+
+Set4LibInterfaces libSet;
+Scene scene;
+
+// auto rotate = std::make_shared<LibInterface>();
+// rotate->Init("libInter4Move.so");
+// libSet.AddLibInterface("libInter4Move.so",rotate);
+// auto m = libSet.GetLibInterface("libInter4Move.so");
+// m->CreateCmd();
+
+
+
+std::cout << "\n\n\n\nXDDDDDDDDDDDDDDDDDDDDDDDDDD\n\n\n\n" << std::endl;
 ProgramInterpreter program_interp;
-program_interp.Read_XML_Config("config/config.xml");
+program_interp.Read_XML_Config("config/config.xml", libSet, scene);
+scene.PrintSceneObjects();
 
 }

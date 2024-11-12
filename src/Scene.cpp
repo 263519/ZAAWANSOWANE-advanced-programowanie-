@@ -1,24 +1,31 @@
 #include "Scene.hh"
-#include <iostream>
+#include "Cuboid.hh"
 
 Scene::Scene() {}
 
 Scene::~Scene() {}
-
-void Scene::AddMobileObj(AbstractMobileObj *pMobObj) {
-    if (pMobObj == nullptr) {
-        std::cerr << "Dodanie pustego wskaznika AbstractMobileObj!" << std::endl;
-        return;
-    }
-    std::string objName = pMobObj->GetName();
-    _Set_MobileObjs[objName] = std::shared_ptr<AbstractMobileObj>(pMobObj);
-}
 
 AbstractMobileObj* Scene::FindMobileObj(const char *sName) {
     auto it = _Set_MobileObjs.find(sName);
     if (it != _Set_MobileObjs.end()) {
         return it->second.get();
     }
-    std::cerr << "Nie znaleziono obiektu o nazwie: " << sName << std::endl;
     return nullptr;
+}
+
+void Scene::AddMobileObj(AbstractMobileObj *pMobObj) {
+    std::shared_ptr<AbstractMobileObj> objPtr(pMobObj);
+    _Set_MobileObjs[pMobObj->GetName()] = objPtr;
+}
+
+void Scene::PrintSceneObjects() const {
+    if (_Set_MobileObjs.empty()) {
+        std::cout << "Brak obiektów na scenie!" << std::endl;
+    } else {
+        std::cout << "Obiekty na scenie:" << std::endl;
+        for (const auto &pair : _Set_MobileObjs) {
+            std::cout << "Nazwa obiektu: " << pair.first << std::endl;
+            
+        }
+    }
 }

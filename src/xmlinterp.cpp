@@ -4,7 +4,9 @@
 #include <sstream>
 #include <cstdlib>
 #include <iostream>
+#include "Scene.hh"
 
+int a;
 
 
 using namespace std;
@@ -14,7 +16,7 @@ using namespace std;
  * Konstruktor klasy. Tutaj należy zainicjalizować wszystkie
  * dodatkowe pola.
  */
-XMLInterp4Config::XMLInterp4Config(Set4LibInterfaces &libSet) : _libSet(libSet) {}
+XMLInterp4Config::XMLInterp4Config(Set4LibInterfaces &libSet,  Scene &scene) : _libSet(libSet), _scene(scene) {}
 
 
 
@@ -65,12 +67,12 @@ void XMLInterp4Config::ProcessLibAttrs(const xercesc::Attributes  &rAttrs)
  cout << "  Nazwa biblioteki: " << sLibName << endl;
 
  // Tu trzeba wpisać własny kod ...
-  std::shared_ptr<LibInterface> libInterface = std::make_shared<LibInterface>();
-  if (!libInterface->Init(sLibName)) {
-      std::cerr << "Nie udało się zainicjalizować biblioteki: " << sLibName << std::endl;
-      return; // lub odpowiednia obsługa błędu
-  }
-  _libSet.AddLibInterface(sLibName, libInterface);
+  // auto libInterface = std::make_shared<LibInterface>();
+  // if (!libInterface->Init(sLibName)) {
+  //     std::cerr << "Nie udało się zainicjalizować biblioteki: " << sLibName << std::endl;
+  //     return; 
+  // }
+  // _libSet.AddLibInterface(sLibName, libInterface);
  // Tu trzeba wpisać własny kod ...
  xercesc::XMLString::release(&sParamName);
  xercesc::XMLString::release(&sLibName);
@@ -93,53 +95,82 @@ void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
   *  Tutaj pobierane sa nazwy pierwszego i drugiego atrybuty.
   *  Sprawdzamy, czy na pewno jest to Name i Value.
   */
-
- char* sName_Name = xercesc::XMLString::transcode(rAttrs.getQName(0));
- char* sName_Scale = xercesc::XMLString::transcode(rAttrs.getQName(1));
- char* sName_RGB = xercesc::XMLString::transcode(rAttrs.getQName(2));
-
- XMLSize_t  Index = 0;
- char* sValue_Name    = xercesc::XMLString::transcode(rAttrs.getValue(Index));
- char* sValue_Scale = xercesc::XMLString::transcode(rAttrs.getValue(1));
- char* sValue_RGB     = xercesc::XMLString::transcode(rAttrs.getValue(2));
-
-
- //-----------------------------------------------------------------------------
- // Wyświetlenie nazw atrybutów i ich "wartości"
- //
- cout << " Atrybuty:" << endl
-      << "     " << sName_Name << " = \"" << sValue_Name << "\"" << endl
-      << "     " << sName_Scale << " = \"" << sValue_Scale << "\"" << endl
-      << "     " << sName_RGB << " = \"" << sValue_RGB << "\"" << endl   
-      << endl; 
- //-----------------------------------------------------------------------------
- // Przykład czytania wartości parametrów
- // Ten przykład jest zrobiony "na piechotę" wykorzystując osobne zmienne.
- // Skala powinna być wektorem. Czytanie powinno być rezlizowane z wykorzysaniem
- // wektorów, np.
- //
- //
- // istringstream IStrm;
- // IStrm.str(sValue_Scale);
- // Vector3D  Scale;
- //
- // IStrm >> Scale;
- //
- istringstream   IStrm;
- 
- IStrm.str(sValue_Scale);
- double  Sx,Sy,Sz;
-
- IStrm >> Sx >> Sy >> Sz;
- if (IStrm.fail()) {
-     cerr << " Blad!!!" << endl;
- } else {
-     cout << " Czytanie wartosci OK!!!" << endl;
-     cout << "     " << Sx << "  " << Sy << "  " << Sz << endl;
- }
-
  // Tu trzeba wstawić odpowiednio własny kod ...
 
+    char* sName_Name = xercesc::XMLString::transcode(rAttrs.getQName(0));
+    char* sName_Scale = xercesc::XMLString::transcode(rAttrs.getQName((XMLSize_t)1));
+    char* sName_RGB = xercesc::XMLString::transcode(rAttrs.getQName((XMLSize_t)2));
+    char* sName_Shift = xercesc::XMLString::transcode(rAttrs.getQName((XMLSize_t)3));
+    char* sName_RotXYZ = xercesc::XMLString::transcode(rAttrs.getQName((XMLSize_t)4));
+    char* sName_Trans = xercesc::XMLString::transcode(rAttrs.getQName((XMLSize_t)5));
+
+    char* sValue_Name = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)0));
+    char* sValue_Scale = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)1));
+    char* sValue_RGB = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)2));
+    char* sValue_Shift = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)3));
+    char* sValue_RotXYZ = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)4));
+    char* sValue_Trans = xercesc::XMLString::transcode(rAttrs.getValue((XMLSize_t)5));
+
+    std::cout << "Atrybuty:" << std::endl
+              << "     " << sName_Name << " = \"" << sValue_Name << "\"" << std::endl
+              << "     " << sName_Scale << " = \"" << sValue_Scale << "\"" << std::endl
+              << "     " << sName_RGB << " = \"" << sValue_RGB << "\"" << std::endl
+              << "     " << sName_Shift << " = \"" << sValue_Shift << "\"" << std::endl
+              << "     " << sName_RotXYZ << " = \"" << sValue_RotXYZ << "\"" << std::endl
+              << "     " << sName_Trans << " = \"" << sValue_Trans << "\"" << std::endl;
+
+    Vector3D scale, rgb, shift, rotXYZ, translation;
+    std::istringstream istr;
+
+
+    istr.str(sValue_Scale);
+    istr >> scale;
+    istr.clear();
+
+
+    istr.str(sValue_RGB);
+    istr >> rgb;
+    istr.clear();
+
+
+    istr.str(sValue_Shift);
+    istr >> shift;
+    istr.clear();
+
+
+    istr.str(sValue_RotXYZ);
+    istr >> rotXYZ;
+    istr.clear();
+
+
+    istr.str(sValue_Trans);
+    istr >> translation;
+    istr.clear();
+
+  
+std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
+
+
+  cuboid->SetPosition_m(Vector3D());  
+  cuboid->SetShift(shift);            
+  cuboid->SetScale(scale);            
+  cuboid->SetRotation(rotXYZ);        
+  cuboid->SetTranslation(translation); 
+  cuboid->SetRGB(rgb);               
+  cuboid->SetAng_Roll_deg(0.0);      
+  cuboid->SetAng_Pitch_deg(0.0);     
+  cuboid->SetAng_Yaw_deg(0.0);       
+  cuboid->SetName(sName_Name);
+ std::cout<<"XD\n";
+   
+  try {
+    _scene.AddMobileObj(cuboid.get());
+} catch (const std::exception& e) {
+    std::cerr << "Exception while adding cuboid: " << e.what() << std::endl;
+}
+
+ // Tu trzeba wstawić odpowiednio własny kod ...
+ std::cout<<"XD\n";
  xercesc::XMLString::release(&sName_Name);
  xercesc::XMLString::release(&sName_Scale);
  xercesc::XMLString::release(&sName_RGB);
