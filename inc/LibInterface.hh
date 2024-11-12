@@ -33,12 +33,12 @@ class LibInterface{
  public:
     ~LibInterface() { if (_LibHnd) dlclose(_LibHnd); }
 
-    bool Init(const std::string &CmdName) {
+    bool Init(const char *CmdName) {
         _CmdName = CmdName;
 
       
-        std::string LibName = "libInterp4" + CmdName + ".so";
-        _LibHnd = dlopen(LibName.c_str(), RTLD_LAZY);
+        
+        _LibHnd = dlopen(CmdName, RTLD_LAZY);
 
         if(_LibHnd == nullptr){
             return false;

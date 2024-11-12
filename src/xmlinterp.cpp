@@ -14,9 +14,8 @@ using namespace std;
  * Konstruktor klasy. Tutaj należy zainicjalizować wszystkie
  * dodatkowe pola.
  */
-XMLInterp4Config::XMLInterp4Config(Configuration &rConfig)
-{
-}
+XMLInterp4Config::XMLInterp4Config(Set4LibInterfaces &libSet) : _libSet(libSet) {}
+
 
 
 /*!
@@ -66,7 +65,13 @@ void XMLInterp4Config::ProcessLibAttrs(const xercesc::Attributes  &rAttrs)
  cout << "  Nazwa biblioteki: " << sLibName << endl;
 
  // Tu trzeba wpisać własny kod ...
-
+  std::shared_ptr<LibInterface> libInterface = std::make_shared<LibInterface>();
+  if (!libInterface->Init(sLibName)) {
+      std::cerr << "Nie udało się zainicjalizować biblioteki: " << sLibName << std::endl;
+      return; // lub odpowiednia obsługa błędu
+  }
+  _libSet.AddLibInterface(sLibName, libInterface);
+ // Tu trzeba wpisać własny kod ...
  xercesc::XMLString::release(&sParamName);
  xercesc::XMLString::release(&sLibName);
 }

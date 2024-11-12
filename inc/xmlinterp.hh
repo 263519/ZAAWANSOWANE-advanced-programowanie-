@@ -9,6 +9,7 @@
 
 #include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/sax2/DefaultHandler.hpp>
+#include "Set4LibInterfaces.hh"
 
 //XERCES_CPP_NAMESPACE_USE
 
@@ -26,7 +27,7 @@ class XMLInterp4Config : public xercesc::DefaultHandler {
    /*!
     * \brief Inicjalizuje obiekt i kojarzy go z listą poleceń robota
     */
-  XMLInterp4Config(Configuration &rConfig);
+  XMLInterp4Config(Set4LibInterfaces &libSet);
 
    /*!
     * \brief Wywoływana jest na początku dokumentu
@@ -84,6 +85,7 @@ class XMLInterp4Config : public xercesc::DefaultHandler {
      */
     void ProcessCubeAttrs(const xercesc::Attributes&   rAttrs); 
   private:
+    Set4LibInterfaces _libSet;
 };
 
 #endif

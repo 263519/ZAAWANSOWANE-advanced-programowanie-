@@ -3,14 +3,16 @@
 
 
 #include "Set4LibInterfaces.hh"
-//#include "Scene.hh"
+#include "Scene.hh"
 #include "ComChannel.hh"
+#include "Configuration.hh"
 
 class ProgramInterpreter {
 private:
-   // Scene _Scn;
+    Scene _Scn;
     Set4LibInterfaces _LibManager;
     ComChannel _Chann2Serv;
+    Configuration _config;
 
 public:
     
