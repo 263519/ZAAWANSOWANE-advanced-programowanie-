@@ -48,10 +48,10 @@ int main (int argc, char* args[])
 {
 //    ProgramInterpreter program_interpreter;
 //    program_interpreter.Read_XML_Config("config/config.xml");
-//    istringstream IStrm4Cmds;
+    istringstream IStrm4Cmds;
 
-//    ExecPreprocesor("config/data.cmd",  IStrm4Cmds);
-//    cout  << IStrm4Cmds.str() << endl;
+    ExecPreprocesor("config/data.cmd",  IStrm4Cmds);
+    cout  << IStrm4Cmds.str() << endl;
    
 
      cout << "Port: " << PORT << endl;

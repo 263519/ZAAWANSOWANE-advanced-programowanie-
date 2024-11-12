@@ -68,7 +68,7 @@ class Sender {
    int             _Socket = 0;
   /*!
    * \brief Wskaźnik na scenę, które stan jest przesyłany w postaci
-   *        poleceń do serwera graficzneg.
+   *        poleceń do serwera graficznego.
    */
    Scene          *_pScn = nullptr;
 
