@@ -48,10 +48,6 @@ void Cuboid::SetName(const char* sName) {
     _name = sName;
 }
 
-/*!
- * \brief Udostępnia nazwę prostopadłościanu.
- * \return Nazwa obiektu jako string.
- */
 const std::string& Cuboid::GetName() const {
     return _name;
 }

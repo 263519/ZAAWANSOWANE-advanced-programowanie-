@@ -32,6 +32,15 @@ public:
 
     void SetName(const char* sName) override;
     const std::string& GetName() const override;
+
+    // TEST TEST
+    void DisplayParameters() const {
+        std::cout << "Nazwa: " << _name << std::endl;
+        std::cout << "Pozycja: " << _position << std::endl;
+        std::cout << "Kat Roll: " << _roll << "°" << std::endl;
+        std::cout << "Kat Pitch: " << _pitch << "°" << std::endl;
+        std::cout << "Kat Yaw: " << _yaw << "°" << std::endl;
+    }
 };
 
 #endif // CUBOID_HH

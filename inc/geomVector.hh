@@ -87,6 +87,17 @@ namespace geom {
      *  \pre 0 <= Ind < Size.
      *  \post Referencja do żądanej składowej wektora.
      */
+
+
+    // WLASNY KONSTRUKTOR 
+    Vector(Type x, Type y, Type z) {
+        static_assert(Size == 3, "Konstruktor wymaga wymiaru 3 wartosci");
+        _Coord[0] = x;
+        _Coord[1] = y;
+        _Coord[2] = z;
+    }
+
+    
    Type  &operator [](unsigned int Ind) { assert(Ind < Size); return _Coord[Ind]; }
 
     /*!

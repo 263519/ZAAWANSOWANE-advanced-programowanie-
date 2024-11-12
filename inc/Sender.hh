@@ -104,24 +104,24 @@ class Sender {
    * \param[in] Socket - deskryptor gniazda sieciowego, poprzez które
    *                     wysyłane są polecenia.
    */
-   void Watching_and_Sending() {
-     while (ShouldCountinueLooping()) {
-       if (!_pScn->IsChanged())  { usleep(10000); continue; }
-       _pScn->LockAccess();
+  //  void Watching_and_Sending() {
+  //    while (ShouldCountinueLooping()) {
+  //      if (!_pScn->IsChanged())  { usleep(10000); continue; }
+  //      _pScn->LockAccess();
        
-       //------- Przeglądanie tej kolekcji to uproszczony przykład
+  //      //------- Przeglądanie tej kolekcji to uproszczony przykład
        
-       for (const GeomObject &rObj : _pScn->_Container4Objects) {
-                                     // Ta instrukcja to tylko uproszczony przykład
-	 std::cout << rObj.GetStateDesc();
-         Send(_Socket,rObj.GetStateDesc()); // Tu musi zostać wywołanie odpowiedniej
-                                           // metody/funkcji gerującej polecenia dla serwera.
-       }
+  //      for (const GeomObject &rObj : _pScn->_Container4Objects) {
+  //                                    // Ta instrukcja to tylko uproszczony przykład
+	//  std::cout << rObj.GetStateDesc();
+  //        Send(_Socket,rObj.GetStateDesc()); // Tu musi zostać wywołanie odpowiedniej
+  //                                          // metody/funkcji gerującej polecenia dla serwera.
+  //      }
        
-       _pScn->CancelChange();
-       _pScn->UnlockAccess();
-     }
-   }
+  //      _pScn->CancelChange();
+  //      _pScn->UnlockAccess();
+  //    }
+  //  }
   
 };
 
@@ -136,7 +136,7 @@ class Sender {
  */
 void Fun_CommunicationThread(Sender  *pSender)
 {
-  pSender->Watching_and_Sending();
+ // pSender->Watching_and_Sending();
 }
 
 
@@ -172,7 +172,11 @@ bool OpenConnection(int &rSocket)
 }
 
 
-
+// CHANGE STATE TRZEBA POPRAWIC TRZEBA POPRAWIC
+// CHANGE STATE TRZEBA POPRAWIC TRZEBA POPRAWIC
+// CHANGE STATE TRZEBA POPRAWIC TRZEBA POPRAWIC
+// CHANGE STATE TRZEBA POPRAWIC TRZEBA POPRAWIC
+// CHANGE STATE TRZEBA POPRAWIC TRZEBA POPRAWIC
 
 /*!
  * \brief Przykład wykonywania pojedynczej operacji z animacją.
@@ -186,22 +190,22 @@ bool OpenConnection(int &rSocket)
  * \retval true - Jeśli dokonan zosała zmiana stanu wszystkich obiektów.
  * \retval false - w przypadku przeciwnym.
  */
-bool ChangeState(Scene &Scn) //GeomObject *pObj, AccessControl  *pAccCtrl)
-{
-  bool Changed;
+// bool ChangeState(Scene &Scn) //GeomObject *pObj, AccessControl  *pAccCtrl)
+// {
+//   bool Changed;
 
-  while (true) {
-    Scn.LockAccess(); // Zamykamy dostęp do sceny, gdy wykonujemy
-                            // modyfikacje na obiekcie.
-    for (GeomObject &rObj : Scn._Container4Objects) {
-       if (!(Changed = rObj.IncStateIndex())) { Scn.UnlockAccess();  return false; }
-    }
-    Scn.MarkChange();
-    Scn.UnlockAccess();
-    usleep(300000);
-  }
-  return true;
-}
+//   while (true) {
+//     Scn.LockAccess(); // Zamykamy dostęp do sceny, gdy wykonujemy
+//                             // modyfikacje na obiekcie.
+//     for (GeomObject &rObj : Scn._Container4Objects) {
+//        if (!(Changed = rObj.IncStateIndex())) { Scn.UnlockAccess();  return false; }
+//     }
+//     Scn.MarkChange();
+//     Scn.UnlockAccess();
+//     usleep(300000);
+//   }
+//   return true;
+// }
 
 
 
