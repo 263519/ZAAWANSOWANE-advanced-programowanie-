@@ -165,9 +165,11 @@ Scene scene;
 
 
 
-std::cout << "\n\n\n\nXDDDDDDDDDDDDDDDDDDDDDDDDDD\n\n\n\n" << std::endl;
+
 ProgramInterpreter program_interp;
 program_interp.Read_XML_Config("config/config.xml", libSet, scene);
 scene.PrintSceneObjects();
+
+
 
 }

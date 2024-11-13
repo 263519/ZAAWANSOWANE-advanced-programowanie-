@@ -6,6 +6,7 @@
 #include "Scene.hh"
 #include "ComChannel.hh"
 #include "Configuration.hh"
+#include "Sender.hh"
 
 class ProgramInterpreter {
 private:

@@ -7,8 +7,7 @@
 #include "Scene.hh"
 
 int a;
-
-
+int Socket4Sending = 0;
 using namespace std;
 
 
@@ -86,6 +85,23 @@ void XMLInterp4Config::ProcessLibAttrs(const xercesc::Attributes  &rAttrs)
  */
 void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
 {
+
+
+  cout << "Port: " << PORT << endl;
+  Scene               Scn;
+
+
+  if (!OpenConnection(Socket4Sending)) return;
+  
+  Sender   ClientSender(Socket4Sending,&Scn);
+  //  thread   Thread4Sending(Fun_Sender, Socket4Sending, &ClientSender);
+
+  thread   Thread4Sending(Fun_CommunicationThread,&ClientSender);
+
+
+
+
+
  if (rAttrs.getLength() < 1) {
       cerr << "Zla ilosc atrybutow dla \"Cube\"" << endl;
       exit(1);
@@ -119,6 +135,27 @@ void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
               << "     " << sName_RotXYZ << " = \"" << sValue_RotXYZ << "\"" << std::endl
               << "     " << sName_Trans << " = \"" << sValue_Trans << "\"" << std::endl;
 
+int sValue_RGB_R = 0, sValue_RGB_G = 0, sValue_RGB_B = 0;
+if (sscanf(sValue_RGB, "%d,%d,%d", &sValue_RGB_R, &sValue_RGB_G, &sValue_RGB_B) != 3) {
+    std::cerr << "Error: Blad odczytu parametru RGB, niepoprawny format: " << sValue_RGB << std::endl;
+    return;
+}
+       
+std::stringstream ss;
+ss << "Clear\n";
+ss << "AddObj Name=" << sValue_Name
+   << " RGB=(" << sValue_RGB_R << "," << sValue_RGB_G << "," << sValue_RGB_B << ")"
+   << " Scale=(" << sValue_Scale << ")"
+   << " Shift=(" << sValue_Shift << ")"
+   << " RotXYZ_deg=(" << sValue_RotXYZ << ")"
+   << " Trans_m=(" << sValue_Trans << ")\n";
+
+    const std::string result = ss.str();
+    const char* sMesg = result.c_str();  
+    std::cout << sMesg << std::endl;
+
+     Send(Socket4Sending,sMesg);
+
     Vector3D scale, rgb, shift, rotXYZ, translation;
     std::istringstream istr;
 
@@ -148,26 +185,26 @@ void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
     istr.clear();
 
   
-std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
+//std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
 
 
-  cuboid->SetPosition_m(Vector3D());  
-  cuboid->SetShift(shift);            
-  cuboid->SetScale(scale);            
-  cuboid->SetRotation(rotXYZ);        
-  cuboid->SetTranslation(translation); 
-  cuboid->SetRGB(rgb);               
-  cuboid->SetAng_Roll_deg(0.0);      
-  cuboid->SetAng_Pitch_deg(0.0);     
-  cuboid->SetAng_Yaw_deg(0.0);       
-  cuboid->SetName(sName_Name);
- std::cout<<"XD\n";
+//   cuboid->SetPosition_m(Vector3D());  
+//   cuboid->SetShift(shift);            
+//   cuboid->SetScale(scale);            
+//   cuboid->SetRotation(rotXYZ);        
+//   cuboid->SetTranslation(translation); 
+//   cuboid->SetRGB(rgb);               
+//   cuboid->SetAng_Roll_deg(0.0);      
+//   cuboid->SetAng_Pitch_deg(0.0);     
+//   cuboid->SetAng_Yaw_deg(0.0);       
+//   cuboid->SetName(sName_Name);
+//  std::cout<<"XD\n";
    
-  try {
-    _scene.AddMobileObj(cuboid.get());
-} catch (const std::exception& e) {
-    std::cerr << "Exception while adding cuboid: " << e.what() << std::endl;
-}
+//   try {
+//     _scene.AddMobileObj(cuboid.get());
+// } catch (const std::exception& e) {
+//     std::cerr << "Exception while adding cuboid: " << e.what() << std::endl;
+// }
 
  // Tu trzeba wstawić odpowiednio własny kod ...
  std::cout<<"XD\n";
@@ -177,6 +214,14 @@ std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
  xercesc::XMLString::release(&sValue_Name);
  xercesc::XMLString::release(&sValue_Scale);
  xercesc::XMLString::release(&sValue_RGB);
+
+
+  cout << "Close\n" << endl; 
+  Send(Socket4Sending,"Close\n");
+  ClientSender.CancelCountinueLooping();
+  Thread4Sending.join();
+  close(Socket4Sending);
+
 }
 
 

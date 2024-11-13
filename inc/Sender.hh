@@ -1,5 +1,5 @@
-#ifndef CONNECTION_HH
-#define CONNECTION_HH
+#ifndef SENDER_HH
+#define SENDER_HH
 
 #include <iostream>
 #include <iomanip>
@@ -30,7 +30,7 @@ using namespace std;
  * \param[in] sMesg - zawiera napis, który ma zostać wysłany poprzez
  *                    gniazdo sieciowe.
  */
-int Send(int Sk2Server, const char *sMesg)
+inline int Send(int Sk2Server, const char *sMesg)
 {
   ssize_t  IlWyslanych;
   ssize_t  IlDoWyslania = (ssize_t) strlen(sMesg);
@@ -134,7 +134,7 @@ class Sender {
  *                      i przesyłanie do serwera graficznego
  *                      aktualnego stanu sceny, gdy uległ on zmianie.
  */
-void Fun_CommunicationThread(Sender  *pSender)
+inline void Fun_CommunicationThread(Sender  *pSender)
 {
  // pSender->Watching_and_Sending();
 }
@@ -145,7 +145,7 @@ void Fun_CommunicationThread(Sender  *pSender)
  * \param[out]  rSocket - deskryptor gniazda, poprzez które może być
  *                        realizowana komunikacja sieciowa.
  */
-bool OpenConnection(int &rSocket)
+inline bool OpenConnection(int &rSocket)
 {
   struct sockaddr_in  DaneAdSerw;
 
@@ -208,10 +208,9 @@ bool OpenConnection(int &rSocket)
 // }
 
 
+#endif // SENDER_HH
 
 
 
 
 
-
-#endif  // CONNECTION_HH

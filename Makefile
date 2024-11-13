@@ -3,7 +3,7 @@ LDFLAGS = -Wall -L/usr/lib/x86_64-linux-gnu
 LIBS = -lxerces-c
 
 OBJDIR = obj
-OBJ = $(OBJDIR)/xmlinterp.o $(OBJDIR)/main.o $(OBJDIR)/scene.o $(OBJDIR)/programinterpreter.o $(OBJDIR)/cuboid.o  # Add cuboid.o
+OBJ = $(OBJDIR)/xmlinterp.o $(OBJDIR)/main.o $(OBJDIR)/scene.o $(OBJDIR)/programinterpreter.o $(OBJDIR)/cuboid.o
 TARGET = xmlinterp4config
 
 $(TARGET): $(OBJ)
@@ -24,7 +24,7 @@ $(OBJDIR)/scene.o: src/Scene.cpp inc/Scene.hh inc/AbstractScene.hh inc/AbstractM
 $(OBJDIR)/programinterpreter.o: src/ProgramInterpreter.cpp inc/ProgramInterpreter.hh inc/AccessControl.hh inc/Port.hh inc/Sender.hh
 	g++ -c $(CPPFLAGS) -o $@ src/ProgramInterpreter.cpp
 
-$(OBJDIR)/cuboid.o: src/Cuboid.cpp inc/Cuboid.hh  
+$(OBJDIR)/cuboid.o: src/Cuboid.cpp inc/Cuboid.hh inc/Port.hh inc/Sender.hh
 	g++ -c $(CPPFLAGS) -o $@ src/Cuboid.cpp
 
 clean:
