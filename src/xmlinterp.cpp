@@ -135,21 +135,31 @@ void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
               << "     " << sName_RotXYZ << " = \"" << sValue_RotXYZ << "\"" << std::endl
               << "     " << sName_Trans << " = \"" << sValue_Trans << "\"" << std::endl;
 
-int sValue_RGB_R = 0, sValue_RGB_G = 0, sValue_RGB_B = 0;
-if (sscanf(sValue_RGB, "%d,%d,%d", &sValue_RGB_R, &sValue_RGB_G, &sValue_RGB_B) != 3) {
-    std::cerr << "Error: Blad odczytu parametru RGB, niepoprawny format: " << sValue_RGB << std::endl;
-    return;
-}
-       
-std::stringstream ss;
-ss << "Clear\n";
-ss << "AddObj Name=" << sValue_Name
-   << " RGB=(" << sValue_RGB_R << "," << sValue_RGB_G << "," << sValue_RGB_B << ")"
-   << " Scale=(" << sValue_Scale << ")"
-   << " Shift=(" << sValue_Shift << ")"
-   << " RotXYZ_deg=(" << sValue_RotXYZ << ")"
-   << " Trans_m=(" << sValue_Trans << ")\n";
 
+       
+ std::stringstream ss;
+//ss << "Clear\n"; 
+ss << "AddObj Name=" << sValue_Name
+   << " RGB=(" 
+   << (sValue_RGB[0] == -1 ? "0" : std::to_string(sValue_RGB[0])) << ", "
+   << (sValue_RGB[1] == -1 ? "." : std::to_string(sValue_RGB[1])) << ", "
+   << (sValue_RGB[2] == -1 ? "1" : std::to_string(sValue_RGB[2])) << ")"
+   << " Scale=(" 
+   << (sValue_Scale[0] == -1 ? "1" : std::to_string(sValue_Scale[0])) << ", "
+   << (sValue_Scale[1] == -1 ? "1" : std::to_string(sValue_Scale[1])) << ", "
+   << (sValue_Scale[2] == -1 ? "1" : std::to_string(sValue_Scale[2])) << ")"
+   << " Shift=(" 
+   << (sValue_Shift[0] == -1 ? "0" : std::to_string(sValue_Shift[0])) << ", "
+   << (sValue_Shift[1] == -1 ? " " : std::to_string(sValue_Shift[1])) << ", "
+   << (sValue_Shift[2] == -1 ? "0" : std::to_string(sValue_Shift[2])) << ")"
+   << " RotXYZ_deg=(" 
+   << (sValue_RotXYZ[0] == -1 ? "0" : std::to_string(sValue_RotXYZ[0])) << ", "
+   << (sValue_RotXYZ[1] == -1 ? "0" : std::to_string(sValue_RotXYZ[1])) << ", "
+   << (sValue_RotXYZ[2] == -1 ? "0" : std::to_string(sValue_RotXYZ[2])) << ")"
+   << " Trans_m=(" 
+   << (sValue_Trans[0] == -1 ? "0" : std::to_string(sValue_Trans[0])) << ", "
+   << (sValue_Trans[1] == -1 ? "0" : std::to_string(sValue_Trans[1])) << ", "
+   << (sValue_Trans[2] == -1 ? "0" : std::to_string(sValue_Trans[2])) << ")\n";
     const std::string result = ss.str();
     const char* sMesg = result.c_str();  
     std::cout << sMesg << std::endl;
