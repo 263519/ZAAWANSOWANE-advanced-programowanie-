@@ -7,7 +7,6 @@
 #include "Scene.hh"
 
 int a;
-int Socket4Sending = 0;
 using namespace std;
 
 
@@ -85,23 +84,6 @@ void XMLInterp4Config::ProcessLibAttrs(const xercesc::Attributes  &rAttrs)
  */
 void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
 {
-
-
-  cout << "Port: " << PORT << endl;
-  Scene               Scn;
-
-
-  if (!OpenConnection(Socket4Sending)) return;
-  
-  Sender   ClientSender(Socket4Sending,&Scn);
-  //  thread   Thread4Sending(Fun_Sender, Socket4Sending, &ClientSender);
-
-  thread   Thread4Sending(Fun_CommunicationThread,&ClientSender);
-
-
-
-
-
  if (rAttrs.getLength() < 1) {
       cerr << "Zla ilosc atrybutow dla \"Cube\"" << endl;
       exit(1);
@@ -136,36 +118,7 @@ void XMLInterp4Config::ProcessCubeAttrs(const xercesc::Attributes  &rAttrs)
               << "     " << sName_Trans << " = \"" << sValue_Trans << "\"" << std::endl;
 
 
-       
- std::stringstream ss;
-//ss << "Clear\n"; 
-ss << "AddObj Name=" << sValue_Name
-   << " RGB=(" 
-   << (sValue_RGB[0] == -1 ? "0" : std::to_string(sValue_RGB[0])) << ", "
-   << (sValue_RGB[1] == -1 ? "." : std::to_string(sValue_RGB[1])) << ", "
-   << (sValue_RGB[2] == -1 ? "1" : std::to_string(sValue_RGB[2])) << ")"
-   << " Scale=(" 
-   << (sValue_Scale[0] == -1 ? "1" : std::to_string(sValue_Scale[0])) << ", "
-   << (sValue_Scale[1] == -1 ? "1" : std::to_string(sValue_Scale[1])) << ", "
-   << (sValue_Scale[2] == -1 ? "1" : std::to_string(sValue_Scale[2])) << ")"
-   << " Shift=(" 
-   << (sValue_Shift[0] == -1 ? "0" : std::to_string(sValue_Shift[0])) << ", "
-   << (sValue_Shift[1] == -1 ? " " : std::to_string(sValue_Shift[1])) << ", "
-   << (sValue_Shift[2] == -1 ? "0" : std::to_string(sValue_Shift[2])) << ")"
-   << " RotXYZ_deg=(" 
-   << (sValue_RotXYZ[0] == -1 ? "0" : std::to_string(sValue_RotXYZ[0])) << ", "
-   << (sValue_RotXYZ[1] == -1 ? "0" : std::to_string(sValue_RotXYZ[1])) << ", "
-   << (sValue_RotXYZ[2] == -1 ? "0" : std::to_string(sValue_RotXYZ[2])) << ")"
-   << " Trans_m=(" 
-   << (sValue_Trans[0] == -1 ? "0" : std::to_string(sValue_Trans[0])) << ", "
-   << (sValue_Trans[1] == -1 ? "0" : std::to_string(sValue_Trans[1])) << ", "
-   << (sValue_Trans[2] == -1 ? "0" : std::to_string(sValue_Trans[2])) << ")\n";
-    const std::string result = ss.str();
-    const char* sMesg = result.c_str();  
-    std::cout << sMesg << std::endl;
-
-     Send(Socket4Sending,sMesg);
-
+    
     Vector3D scale, rgb, shift, rotXYZ, translation;
     std::istringstream istr;
 
@@ -195,29 +148,33 @@ ss << "AddObj Name=" << sValue_Name
     istr.clear();
 
   
-//std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
+std::shared_ptr<Cuboid> cuboid = std::make_shared<Cuboid>();
 
 
-//   cuboid->SetPosition_m(Vector3D());  
-//   cuboid->SetShift(shift);            
-//   cuboid->SetScale(scale);            
-//   cuboid->SetRotation(rotXYZ);        
-//   cuboid->SetTranslation(translation); 
-//   cuboid->SetRGB(rgb);               
-//   cuboid->SetAng_Roll_deg(0.0);      
-//   cuboid->SetAng_Pitch_deg(0.0);     
-//   cuboid->SetAng_Yaw_deg(0.0);       
-//   cuboid->SetName(sName_Name);
-//  std::cout<<"XD\n";
+  cuboid->SetPosition_m(Vector3D());  
+  cuboid->SetShift(shift);            
+  cuboid->SetScale(scale);            
+  cuboid->SetRotation(rotXYZ);        
+  cuboid->SetTranslation(translation); 
+  cuboid->SetRGB(rgb);               
+  cuboid->SetAng_Roll_deg(0.0);      
+  cuboid->SetAng_Pitch_deg(0.0);     
+  cuboid->SetAng_Yaw_deg(0.0);       
+  cuboid->SetName(sValue_Name);
+  std::cout<<"XD\n";
    
-//   try {
-//     _scene.AddMobileObj(cuboid.get());
-// } catch (const std::exception& e) {
-//     std::cerr << "Exception while adding cuboid: " << e.what() << std::endl;
-// }
+  try {
+    _scene.AddMobileObj(cuboid);
+} catch (const std::exception& e) {
+    std::cerr << "Wyjatek podczas dodawania Cuboida: " << e.what() << std::endl;
+}
+
+
+std::cout<<"XD\n\n\n\n";
+_scene.PrintSceneObjects();
 
  // Tu trzeba wstawić odpowiednio własny kod ...
- std::cout<<"XD\n";
+ std::cout<<"XD\n\n\n";
  xercesc::XMLString::release(&sName_Name);
  xercesc::XMLString::release(&sName_Scale);
  xercesc::XMLString::release(&sName_RGB);
@@ -225,12 +182,6 @@ ss << "AddObj Name=" << sValue_Name
  xercesc::XMLString::release(&sValue_Scale);
  xercesc::XMLString::release(&sValue_RGB);
 
-
-  cout << "Close\n" << endl; 
-  Send(Socket4Sending,"Close\n");
-  ClientSender.CancelCountinueLooping();
-  Thread4Sending.join();
-  close(Socket4Sending);
 
 }
 

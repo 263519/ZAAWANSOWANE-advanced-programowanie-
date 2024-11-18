@@ -13,9 +13,8 @@ AbstractMobileObj* Scene::FindMobileObj(const char *sName) {
     return nullptr;
 }
 
-void Scene::AddMobileObj(AbstractMobileObj *pMobObj) {
-    std::shared_ptr<AbstractMobileObj> objPtr(pMobObj);
-    _Set_MobileObjs[pMobObj->GetName()] = objPtr;
+void Scene::AddMobileObj(std::shared_ptr<AbstractMobileObj> pMobObj) {
+    _Set_MobileObjs[pMobObj->GetName()] = pMobObj;
 }
 
 void Scene::PrintSceneObjects() const {

@@ -157,11 +157,11 @@ int main (int argc, char* args[])
 Set4LibInterfaces libSet;
 Scene scene;
 
-// auto rotate = std::make_shared<LibInterface>();
-// rotate->Init("libInter4Move.so");
-// libSet.AddLibInterface("libInter4Move.so",rotate);
-// auto m = libSet.GetLibInterface("libInter4Move.so");
-// m->CreateCmd();
+// // auto rotate = std::make_shared<LibInterface>();
+// // rotate->Init("libInter4Move.so");
+// // libSet.AddLibInterface("libInter4Move.so",rotate);
+// // auto m = libSet.GetLibInterface("libInter4Move.so");
+// // m->CreateCmd();
 
 
 
@@ -169,6 +169,16 @@ Scene scene;
 ProgramInterpreter program_interp;
 program_interp.Read_XML_Config("config/config.xml", libSet, scene);
 scene.PrintSceneObjects();
+
+
+// Scene scene;
+// auto cuboid = std::make_shared<Cuboid>();
+// cuboid->SetName("XD");
+
+   
+
+// scene.AddMobileObj(cuboid);
+// scene.PrintSceneObjects();
 
 
 

@@ -17,7 +17,7 @@ public:
     virtual ~Scene();  
 
     virtual AbstractMobileObj* FindMobileObj(const char *sName) override;  
-    virtual void AddMobileObj(AbstractMobileObj *pMobObj) override; 
+    virtual void AddMobileObj(std::shared_ptr<AbstractMobileObj> pMobObj);
     void PrintSceneObjects() const; 
 
 private:

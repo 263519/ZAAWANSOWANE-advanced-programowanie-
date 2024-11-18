@@ -24,7 +24,7 @@
 #include "Cuboid.hh"
 #include "Sender.hh"
 
-  extern int Socket4Sending; 
+
 /*!
  * \brief Implementuje reakcje na napotkane elementu opisu akcji
  *
