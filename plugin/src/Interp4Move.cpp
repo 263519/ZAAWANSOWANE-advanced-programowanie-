@@ -1,6 +1,11 @@
 #include <iostream>
 #include "Interp4Move.hh"
-
+#include "ComChannel.hh"
+#include "Cuboid.hh"
+#include <mutex>
+#include <thread>
+#include <iostream> 
+#include <chrono>
 
 using std::cout;
 using std::endl;
@@ -61,10 +66,30 @@ bool Interp4Move::ExecCmd( AbstractScene      &rScn,
 			   AbstractComChannel &rComChann
 			 )
 {
-  /*
-   *  Tu trzeba napisać odpowiedni kod.
-   */
-  return true;
+    std::thread::id threadId = std::this_thread::get_id();
+    std::cout << "ID wątku wykonującego polecenie: " << threadId << std::endl;
+
+    AbstractMobileObj *pObj = rScn.FindMobileObj(sMobObjName);
+    if (pObj == nullptr) {
+        std::cerr << "Błąd: Obiekt '" << sMobObjName << "' nie istnieje w scenie." << std::endl;
+        return false;
+    }
+    pObj->LockAccess();
+    if (!pObj->Move()) {
+          
+            return false;
+    }
+    rComChann.LockAccess();
+    if (!rComChann.Send("Ruch zakończony pomyślnie."))
+            return false;
+    }
+    rComChann.UnlockAccess();
+    pObj->UnlockAccess();
+    
+    std::this_thread::sleep_for(std::chrono::microseconds(1000));
+    std::cout << "Koniec Move "<< std::endl;
+    return true;
+  
 }
 
 

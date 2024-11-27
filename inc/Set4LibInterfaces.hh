@@ -19,6 +19,11 @@ public:
         _LibMap[cmdName] = libInterface;
     }
 
+        void AddLibInterface(const std::string& cmdName, LibInterface* libInterface) {
+
+        _LibMap[cmdName] = std::shared_ptr<LibInterface>(libInterface);
+    }
+
 
     std::shared_ptr<LibInterface> GetLibInterface(const std::string& cmdName) const {
         auto it = _LibMap.find(cmdName);  
@@ -28,6 +33,19 @@ public:
         } else {
             std::cout << "Brak wtyczki o nazwie: " << cmdName << std::endl;
             return nullptr;  
+        }
+    }
+
+
+    void PrintPlugins() const {
+        if (_LibMap.empty()) {
+            std::cout << "Brak dostępnych wtyczek." << std::endl;
+            return;
+        }
+
+        std::cout << "Dostępne wtyczki:" << std::endl;
+        for (const auto& [cmdName, libInterface] : _LibMap) {
+            std::cout << " - " << cmdName << std::endl;
         }
     }
 };

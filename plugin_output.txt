@@ -1,0 +1,12 @@
+Komenda: Set
+Składnia: 
+Opis komendy: 
+
+Komenda: Pause
+Składnia: 
+Opis komendy: 
+
+Komenda: Rotate
+Składnia: 
+Opis komendy: 
+

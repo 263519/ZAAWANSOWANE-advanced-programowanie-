@@ -54,6 +54,8 @@
         *  bezpieczniejszego zamknięcia.
         */
        virtual std::mutex &UseGuard() = 0;
+
+      virtual bool Send(const std::string &message)=0;
     };
 
 

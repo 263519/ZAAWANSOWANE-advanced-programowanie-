@@ -33,6 +33,11 @@ public:
     std::mutex& UseGuard() override {
         return _mutex;
     }
+
+    virtual bool Send(const std::string &message) override{
+        return true;
+    }
+
 };
 
 #endif  // COMCHANNEL_HH

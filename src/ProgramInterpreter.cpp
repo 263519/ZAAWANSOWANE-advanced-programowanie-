@@ -102,6 +102,9 @@ bool ProgramInterpreter::Read_XML_Config(const char *FileName, Set4LibInterfaces
 
 
     std::cout<<"KONIEC\n";
+    std::cout<<"KONIEC\n";
+    std::cout<<"KONIEC\n";
+    std::cout<<"KONIEC\n";
     return true;
 }
 

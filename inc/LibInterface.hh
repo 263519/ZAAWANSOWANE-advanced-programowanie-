@@ -33,26 +33,31 @@ class LibInterface{
  public:
     ~LibInterface() { if (_LibHnd) dlclose(_LibHnd); }
 
-    bool Init(const char *CmdName) {
-        _CmdName = CmdName;
 
-      
-        
-        _LibHnd = dlopen(CmdName, RTLD_LAZY);
 
-        if(_LibHnd == nullptr){
-            return false;
-        }
-            
-        void *pFun = dlsym(_LibHnd, "CreateCmd");
-
-        if(pFun == nullptr){
-            return false;
-        }
-
-        _pCreateCmd = reinterpret_cast<AbstractInterp4Command* (*)(void)>(pFun);
-        return true;
+bool Init(const char *FileLibName) {
+    std::cout<<"INIT\n"<< std::endl;;
+    _CmdName = FileLibName;
+    _LibHnd = dlopen(FileLibName, RTLD_LAZY);
+    std::cout<<"XD00\n"<< std::endl;;
+std::cout<<"XD00\n"<< std::endl;;
+    if (_LibHnd == nullptr) {
+        std::cout<<"XD\n";
+        std::cerr << "dlopen error: " << dlerror() << std::endl;
+        return false;
     }
+            
+    void *pFun = dlsym(_LibHnd, "CreateCmd");
+
+    if (pFun == nullptr) {
+        std::cout<<"XD v2\n";
+        std::cerr << "dlsym error: " << dlerror() << std::endl;
+        return false;
+    }
+
+    _pCreateCmd = reinterpret_cast<AbstractInterp4Command* (*)(void)>(pFun);
+    return true;
+}
 
 
     AbstractInterp4Command *CreateCmd() { return (*_pCreateCmd)(); }

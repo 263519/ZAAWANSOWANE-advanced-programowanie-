@@ -1,7 +1,7 @@
 #ifndef ABSGTRACTMOBILEOBJ_HH
 #define ABSGTRACTMOBILEOBJ_HH
 
-
+#include <mutex>
 /*!
  * \file 
  * \brief Zawiera definicję klasy abstrakcyjnej AbstractMobileObj
@@ -20,6 +20,7 @@
     * Nazwy metod są obowiązujące.
     */
     class AbstractMobileObj {
+      std::mutex _mutex;
      public:
 
        virtual ~AbstractMobileObj() {}
@@ -101,6 +102,14 @@
         *  \return Nazwa obiektu.
         */
         virtual const std::string & GetName() const = 0;
+
+      virtual void LockAccess() = 0;
+
+      virtual void UnlockAccess() = 0;
+
+      virtual bool Move() = 0;
+      virtual bool Rotate() = 0;
+    
     };
 
 

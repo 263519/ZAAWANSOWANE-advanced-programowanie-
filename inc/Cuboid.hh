@@ -5,7 +5,7 @@
 #include "Vector3D.hh"
 #include "geomVector.hh"
 #include <string>
-
+#include <mutex>
 class Cuboid : public AbstractMobileObj {
 private:
     Vector3D _position;
@@ -18,6 +18,7 @@ private:
     double _pitch;
     double _yaw;
     std::string _name;
+    std::mutex _mutex;
 
 public:
     Cuboid();
@@ -55,6 +56,28 @@ public:
 
     const Vector3D & GetRGB() const;
     void SetRGB(const Vector3D &rgb);
+
+    void LockAccess() override{
+        _mutex.lock();
+    }
+
+    void UnlockAccess() override{
+        _mutex.unlock();
+    }
+
+    bool Move() override{
+        _position[0]+=10;
+        _position[1]+=10;
+        _position[2]+=10;
+        return true;
+    }
+
+        bool Rotate() override{
+        _rotation[0]+=10;
+        _rotation[1]+=10;
+        _rotation[2]+=10;
+        return true;
+    }
 };
 
 #endif
