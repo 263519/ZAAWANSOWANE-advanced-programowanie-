@@ -77,7 +77,9 @@ bool Interp4Rotate::ExecCmd( AbstractScene      &rScn,
             return false;
     }
     rComChann.LockAccess();
-    rComChann.Send("Ruch zakończony pomyślnie.");
+    if (!rComChann.Send("Rotate")){
+            return false;
+    }
     rComChann.UnlockAccess();
     pObj->UnlockAccess();
     

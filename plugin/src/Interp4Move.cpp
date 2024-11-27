@@ -80,7 +80,7 @@ bool Interp4Move::ExecCmd( AbstractScene      &rScn,
             return false;
     }
     rComChann.LockAccess();
-    if (!rComChann.Send("Ruch zakończony pomyślnie."))
+    if (!rComChann.Send("Move")){
             return false;
     }
     rComChann.UnlockAccess();
