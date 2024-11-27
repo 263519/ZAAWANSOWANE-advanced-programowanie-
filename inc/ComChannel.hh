@@ -35,6 +35,7 @@ public:
     }
 
     virtual bool Send(const std::string &message) override{
+        std::cout<<"Sending"<<std::endl;
         return true;
     }
 
