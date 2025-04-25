@@ -16,21 +16,19 @@ act(Action, Knowledge) :-
 	assert(myPosition(1,1,east)), % start possition
 	assert(myTrail([])), % given trail
 	assert(myVisited([1])), % visited poles
-	assert(myVisitedStench([])),
 	assert(myGold(0)), % pick up gold
 	act(Action, Knowledge).
 
 % Agent actions
-act(Action, Knowledge) :- exit_if_start_with_breeze_or_stench(Action, Knowledge). % if no way on entry
-act(Action, Knowledge) :- exit_after_gold(Action, Knowledge). % if you got gold just exit
-act(Action, Knowledge) :- go_back_step(Action, Knowledge). % if with gold without exit, go back
-act(Action, Knowledge) :- pick_up_gold(Action, Knowledge). % if no gold but on the same pole, pick up
-act(Action, Knowledge) :- go_down(Action, Knowledge). % if save move down
-act(Action, Knowledge) :- go_right(Action, Knowledge). % if save move right
-act(Action, Knowledge) :- go_up(Action, Knowledge). % if save move up
-act(Action, Knowledge) :- go_left(Action, Knowledge). % if save move left
-act(Action, Knowledge) :- exit_without_gold_available(Action, Knowledge). % if no movment and exit just leave
-act(Action, Knowledge) :- go_to_previous_position(Action, Knowledge). % if no movment and no exit, go back
+act(Action, Knowledge) :- exit_if_start_with_breeze_or_stench(Action, Knowledge). 
+act(Action, Knowledge) :- go_back_step(Action, Knowledge). 
+act(Action, Knowledge) :- pick_up_gold(Action, Knowledge). 
+act(Action, Knowledge) :- go_down(Action, Knowledge). 
+act(Action, Knowledge) :- go_right(Action, Knowledge). 
+act(Action, Knowledge) :- go_up(Action, Knowledge). 
+act(Action, Knowledge) :- go_left(Action, Knowledge). 
+act(Action, Knowledge) :- exit_without_gold_available(Action, Knowledge).
+act(Action, Knowledge) :- go_to_previous_position(Action, Knowledge). 
 
 % Exit
 exit_if_breeze_or_stench_detected(Action, Knowledge) :-
@@ -65,7 +63,6 @@ pick_up_gold(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	Action = grab,	
 	NewGold is Gold + 1,
@@ -74,7 +71,6 @@ pick_up_gold(Action, Knowledge) :-
 		     myPosition(X,Y,Orient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(NewGold)].
 
 
@@ -85,8 +81,7 @@ go_back_step(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
+	Trail = [[X_Old,Y_Old] | Trail_Tail],
 	forwardStep(X, Y, Orient, New_X, New_Y),
 	New_X = X_Old,
 	New_Y = Y_Old,
@@ -96,7 +91,6 @@ go_back_step(Action, Knowledge) :-
 		     myPosition(X_Old,Y_Old,Orient),
 		     myTrail(Trail_Tail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_back_step(Action, Knowledge) :-
@@ -105,7 +99,6 @@ go_back_step(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	shiftOrientLeft(Orient, NewOrient),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
 	forwardStep(X, Y, NewOrient, New_X, New_Y),
@@ -117,7 +110,6 @@ go_back_step(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_back_step(Action, Knowledge) :-
@@ -126,7 +118,6 @@ go_back_step(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	shiftOrientRight(Orient, NewOrient),
 	Action = turnRight,
 	Knowledge = [gameStarted,
@@ -134,7 +125,6 @@ go_back_step(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 % Explore
@@ -145,7 +135,6 @@ go_down(Action, Knowledge) :-
 	Y \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),	
 	myGold(Gold),
 	forwardStep(X, Y, south, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -159,7 +148,6 @@ go_down(Action, Knowledge) :-
 			 myPosition(New_X,New_Y,Orient),
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_down(Action, Knowledge) :-
@@ -169,19 +157,21 @@ go_down(Action, Knowledge) :-
 	Y \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
+    
+
 	forwardStep(X, Y, south, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
 	not(member(New_Visited_XY,Visited)),
 	Orient = west,
 	Action = turnLeft, 
-	Knowledge = [gameStarted,
+	
+    
+    Knowledge = [gameStarted,
 			 myWorldSize(Max_X, Max_Y),
 		     myPosition(X,Y,south),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_down(Action, Knowledge) :-
@@ -191,7 +181,6 @@ go_down(Action, Knowledge) :-
 	Y \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, south, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -203,7 +192,6 @@ go_down(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
@@ -213,7 +201,6 @@ go_right(Action, Knowledge) :-
 	X \= Max_X,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, east, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -227,7 +214,6 @@ go_right(Action, Knowledge) :-
 		     myPosition(New_X,New_Y,Orient),
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
@@ -238,7 +224,6 @@ go_right(Action, Knowledge) :-
 	X \= Max_X,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, east, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -250,7 +235,6 @@ go_right(Action, Knowledge) :-
 		     myPosition(X,Y,east),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
@@ -261,7 +245,6 @@ go_right(Action, Knowledge) :-
 	X \= Max_X,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, east, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -273,7 +256,6 @@ go_right(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
@@ -284,7 +266,6 @@ go_up(Action, Knowledge) :-
 	Y \= Max_Y,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, north, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -298,7 +279,6 @@ go_up(Action, Knowledge) :-
 		     myPosition(New_X,New_Y,Orient),
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
@@ -309,7 +289,6 @@ go_up(Action, Knowledge) :-
 	Y \= Max_Y,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, north, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -321,7 +300,6 @@ go_up(Action, Knowledge) :-
 		     myPosition(X,Y,north),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
@@ -332,7 +310,6 @@ go_up(Action, Knowledge) :-
 	Y \= Max_Y,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, north, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -344,7 +321,6 @@ go_up(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
@@ -355,7 +331,6 @@ go_left(Action, Knowledge) :-
 	X \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, west, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -369,7 +344,6 @@ go_left(Action, Knowledge) :-
 		     myPosition(New_X,New_Y,Orient),
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
@@ -380,7 +354,6 @@ go_left(Action, Knowledge) :-
 	X \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, west, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -392,7 +365,6 @@ go_left(Action, Knowledge) :-
 		     myPosition(X,Y,west),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
@@ -403,7 +375,6 @@ go_left(Action, Knowledge) :-
 	X \= 1,
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	forwardStep(X, Y, west, New_X, New_Y),
 	New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -415,7 +386,6 @@ go_left(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 
@@ -425,7 +395,6 @@ go_to_previous_position(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 
 	myGold(Gold),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
@@ -438,7 +407,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myPosition(X_Old,Y_Old,Orient),
 		     myTrail(Trail_Tail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_to_previous_position(Action, Knowledge) :-
@@ -446,7 +414,6 @@ go_to_previous_position(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 
 	myGold(Gold),
 	shiftOrientLeft(Orient, NewOrient),
@@ -460,7 +427,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 go_to_previous_position(Action, Knowledge) :-
@@ -468,7 +434,6 @@ go_to_previous_position(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	myGold(Gold),
 	shiftOrientRight(Orient, NewOrient),
 	Action = turnRight,
@@ -477,7 +442,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myPosition(X,Y,NewOrient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     myGold(Gold)].
 
 % Basic movment options
