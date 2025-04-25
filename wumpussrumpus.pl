@@ -39,7 +39,7 @@ act(Action, Knowledge) :-
 	assert(haveGold(0)),
 	act(Action, Knowledge).
 
-act(Action, Knowledge) :- exit_if_breeze_or_stench_detected(Action, Knowledge).
+act(Action, Knowledge) :- exit_if_blocked(Action, Knowledge).
 act(Action, Knowledge) :- exit_after_gold(Action, Knowledge).
 act(Action, Knowledge) :- go_back_step(Action, Knowledge).
 act(Action, Knowledge) :- pick_up_gold(Action, Knowledge).
@@ -50,7 +50,7 @@ act(Action, Knowledge) :- go_left(Action, Knowledge).
 act(Action, Knowledge) :- exit_without_gold_available(Action, Knowledge).
 act(Action, Knowledge) :- go_back(Action, Knowledge).
 
-exit_if_breeze_or_stench_detected(Action, Knowledge) :-
+exit_if_blocked(Action, Knowledge) :-
     (stench; breeze),
     myPosition(X,Y,Orient),
     X = 1,
@@ -84,7 +84,7 @@ pick_up_gold(Action, Knowledge) :-
 	myVisited(Visited),
 	haveGold(NGolds),
 	Action = grab,	
-	NewGold is NGolds + 1,
+	NewNGolds is NGolds + 1,
 	Knowledge = [gameStarted,
 			 myWorldSize(Max_X, Max_Y),
 		     myPosition(X,Y,Orient),
@@ -93,11 +93,21 @@ pick_up_gold(Action, Knowledge) :-
 		     haveGold(NewGold)].
 
 go_back_step(Action, Knowledge) :-
+	%%% assuming we have just found gold:
+	%%% 1. our last action must have been grab
+	%%% 2. our previuos action must have been moveForward
+	%%% 3. so we are initiating a turnback and then return:
+	%%%    (a) pop grab from the stack
+	%%%    (b) replace it by an artificial turnRight we have never
+	%%%        executed, but we will be reversing by turning left
+	%%%    (c) execute a turnRight now which together will turn us back
+	%%% 4. after that we are facing back and can execute actions in reverse
+	%%% 5. because of grab we can be sure this rule is executed exactly once
 	haveGold(NGolds), NGolds > 0,
 	myWorldSize(Max_X, Max_Y),
 	myTrail(Trail),
 	Trail = [ [grab,X,Y,Orient] | Trail_Tail ],
-	New_Trail = [ [turnRight,X,Y,Orient] | Trail_Tail ],
+	New_Trail = [ [turnRight,X,Y,Orient] | Trail_Tail ], %Orient is misleading here
 	Action = turnLeft,
 	Knowledge = [gameStarted,
 	             haveGold(NGolds),
@@ -116,6 +126,7 @@ go_back_step(Action, Knowledge) :-
 		     myPosition(X, Y, Orient),
 		     myTrail(Trail_Tail)].
 
+%%% backtracking a step can be moving or can be turning
 go_back_step(Action, Knowledge) :- go_back_turn(Action, Knowledge).
 
 go_back_turn(Action, Knowledge) :-
