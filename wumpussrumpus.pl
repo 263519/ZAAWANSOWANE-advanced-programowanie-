@@ -1,38 +1,55 @@
 /* -*- mode: Prolog; comment-column: 48 -*- */
 
-/* Jovolog: Template for creating agent programs for the wumpus world based on
-  Artifical Intelligence, A Modern Approach, Second Edition
-  Chapter 7.2: The Wumpus World
-  
+/****************************************************************************
+ *
+ * Copyright (c) 2013 Witold Paluszynski
+ *
+ * I grant everyone the right to copy this program in whole or part, and
+ * to use it for any purpose, provided the source is properly acknowledged.
+ *
+ * Udzielam kazdemu prawa do kopiowania tego programu w calosci lub czesci,
+ * i wykorzystania go w dowolnym celu, pod warunkiem zacytowania zrodla.
+ *
+ ****************************************************************************/
+
+
+/*
+  This program implements a simple agent strategy for the wumpus world.
+  The agent ignores all dangers of the wumpus world.
+  The strategy is to go forward along the perimeter,
+  turn left when reached the opposing wall,
+  but first of all pick up gold if stumbled upon it,
+  and exit the game if at home with gold.
+  This version registers all steps on a stack, and uses it to reverse
+  the actions after having found gold, thus properly returning home.
+
+  Also demonstrates how to keep track of her own position and orientation.
+  The agent assumes that the starting point is (1,1) and orientation "east".
 */
 
+% auxiliary initial action generating rule
 act(Action, Knowledge) :-
-	% To avoid looping on act/2.
 	not(gameStarted),
 	assert(gameStarted),
-	% Creating initial knowledge
-	worldSize(X,Y), % world size
-	assert(myWorldSize(X,Y)), % save to memory
-	assert(myPosition(1,1,east)), % start possition
-	assert(myTrail([])), % given trail
-	assert(myVisited([1])), % visited poles
-	assert(myVisitedStench([])),
-	assert(haveGold(0)), % pick up NGolds
+	worldSize(X,Y),				%this is given
+	assert(myWorldSize(X,Y)),
+	assert(myPosition(1, 1, east)),		%this we assume by default
+	assert(myTrail([])),
+	assert(myVisited([1])),
+	assert(haveGold(0)),
 	act(Action, Knowledge).
 
-% Agent actions
-act(Action, Knowledge) :- exit_if_start_with_breeze_or_stench(Action, Knowledge). % if no way on entry
-act(Action, Knowledge) :- exit_after_gold(Action, Knowledge). % if you got NGolds just exit
-act(Action, Knowledge) :- go_to_base(Action, Knowledge). % if with NGolds without exit, go back
-act(Action, Knowledge) :- pick_up_gold(Action, Knowledge). % if no NGolds but on the same pole, pick up
-act(Action, Knowledge) :- go_down(Action, Knowledge). % if save move down
-act(Action, Knowledge) :- go_right(Action, Knowledge). % if save move right
-act(Action, Knowledge) :- go_up(Action, Knowledge). % if save move up
-act(Action, Knowledge) :- go_left(Action, Knowledge). % if save move left
-act(Action, Knowledge) :- exit_without_gold_available(Action, Knowledge). % if no movment and exit just leave
-act(Action, Knowledge) :- go_to_previous_position(Action, Knowledge). % if no movment and no exit, go back
+act(Action, Knowledge) :- exit_if_breeze_or_stench_detected(Action, Knowledge).
+act(Action, Knowledge) :- exit_after_gold(Action, Knowledge).
+act(Action, Knowledge) :- go_back_step(Action, Knowledge).
+act(Action, Knowledge) :- pick_up_gold(Action, Knowledge).
+act(Action, Knowledge) :- go_down(Action, Knowledge).
+act(Action, Knowledge) :- go_right(Action, Knowledge).
+act(Action, Knowledge) :- go_up(Action, Knowledge).
+act(Action, Knowledge) :- go_left(Action, Knowledge).
+act(Action, Knowledge) :- exit_without_gold_available(Action, Knowledge).
+act(Action, Knowledge) :- go_back(Action, Knowledge).
 
-% Exit
 exit_if_breeze_or_stench_detected(Action, Knowledge) :-
     (stench; breeze),
     myPosition(X,Y,Orient),
@@ -65,7 +82,6 @@ pick_up_gold(Action, Knowledge) :-
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
 	haveGold(NGolds),
 	Action = grab,	
 	NewGold is NGolds + 1,
@@ -74,92 +90,62 @@ pick_up_gold(Action, Knowledge) :-
 		     myPosition(X,Y,Orient),
 		     myTrail(Trail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     haveGold(NewGold)].
 
-
-% Go back to exit
-go_to_base(Action, Knowledge) :-
+go_back_step(Action, Knowledge) :-
 	haveGold(NGolds), NGolds > 0,
 	myWorldSize(Max_X, Max_Y),
-	myPosition(X,Y,Orient),
 	myTrail(Trail),
-	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-	Trail = [[X_Old,Y_Old]  | Trail_Tail],
-	forwardStep(X, Y, Orient, New_X, New_Y),
-	New_X = X_Old,
-	New_Y = Y_Old,
-	Action = moveForward,
-	Knowledge = [gameStarted,
-			 myWorldSize(Max_X, Max_Y),
-		     myPosition(X_Old,Y_Old,Orient),
-		     myTrail(Trail_Tail),
-			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
-		     haveGold(NGolds)].
-
-go_to_base(Action, Knowledge) :-
-	haveGold(NGolds), NGolds > 0,
-	myWorldSize(Max_X, Max_Y),
-	myPosition(X,Y,Orient),
-	myTrail(Trail),
-	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-	shiftOrientLeft(Orient, NewOrient),
-	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
-	forwardStep(X, Y, NewOrient, New_X, New_Y),
-	New_X = X_Old,
-	New_Y = Y_Old,
+	Trail = [ [grab,X,Y,Orient] | Trail_Tail ],
+	New_Trail = [ [turnRight,X,Y,Orient] | Trail_Tail ],
 	Action = turnLeft,
 	Knowledge = [gameStarted,
-			 myWorldSize(Max_X, Max_Y),
-		     myPosition(X,Y,NewOrient),
-		     myTrail(Trail),
-			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
-		     haveGold(NGolds)].
+	             haveGold(NGolds),
+		     myWorldSize(Max_X, Max_Y),
+		     myPosition(X, Y, Orient),
+		     myTrail(New_Trail)].
 
-go_to_base(Action, Knowledge) :-
+go_back_step(Action, Knowledge) :-
 	haveGold(NGolds), NGolds > 0,
 	myWorldSize(Max_X, Max_Y),
-	myPosition(X,Y,Orient),
-	myTrail(Trail),
-	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-	shiftOrientRight(Orient, NewOrient),
-	Action = turnRight,
+	myTrail([ [Action,X,Y,Orient] | Trail_Tail ]),
+	Action = moveForward,
 	Knowledge = [gameStarted,
-			 myWorldSize(Max_X, Max_Y),
-		     myPosition(X,Y,NewOrient),
-		     myTrail(Trail),
-			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
-		     haveGold(NGolds)].
+	             haveGold(NGolds),
+		     myWorldSize(Max_X, Max_Y),
+		     myPosition(X, Y, Orient),
+		     myTrail(Trail_Tail)].
 
-% Explore - DOWN
+go_back_step(Action, Knowledge) :- go_back_turn(Action, Knowledge).
+
+go_back_turn(Action, Knowledge) :-
+	haveGold(NGolds), NGolds > 0,
+	myWorldSize(Max_X, Max_Y),
+	myTrail([ [OldAct,X,Y,Orient] | Trail_Tail ]),
+	((OldAct=turnLeft,Action=turnRight);(OldAct=turnRight,Action=turnLeft)),
+	Knowledge = [gameStarted,
+	             haveGold(NGolds),
+		     myWorldSize(Max_X, Max_Y),
+		     myPosition(X, Y, Orient),
+		     myTrail(Trail_Tail)].
+
 go_down(Action, Knowledge) :-
-    % Check common conditions first
     not(breeze; stench),
     myWorldSize(Max_X, Max_Y),
     myPosition(X, Y, Orient),
-    Y \= 1,  % Make sure we're not at the bottom edge
+    Y \= 1,
     can_move_south(X, Y, Max_X, Max_Y, Visited),
-    % Call appropriate action based on current orientation
     determine_down_action(Orient, X, Y, Max_X, Max_Y, Action, Knowledge).
 
-% Helper predicate to check if we can move south
 can_move_south(X, Y, Max_X, Max_Y, Visited) :-
     myVisited(Visited),
     forwardStep(X, Y, south, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
     not(member(New_Visited_XY, Visited)).
 
-% Case 1: Already facing south, just move forward
 determine_down_action(south, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     forwardStep(X, Y, south, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -170,30 +156,24 @@ determine_down_action(south, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
                  myPosition(New_X, New_Y, south),
                  myTrail(New_Trail),
                  myVisited(New_Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 2: Facing west, need to turn left
 determine_down_action(west, X, Y, Max_X, Max_Y, turnLeft, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     Knowledge = [gameStarted,
                  myWorldSize(Max_X, Max_Y),
                  myPosition(X, Y, south),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 3: Facing north or east, turn right to eventually face south
 determine_down_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
     Orient \= south,
     Orient \= west,
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     shiftOrientRight(Orient, NewOrient),
     Knowledge = [gameStarted,
@@ -201,32 +181,25 @@ determine_down_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
                  myPosition(X, Y, NewOrient),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Explore - RIGHT
 go_right(Action, Knowledge) :-
-    % Check common conditions first
     not(breeze; stench),
     myWorldSize(Max_X, Max_Y),
     myPosition(X, Y, Orient),
-    X \= Max_X,  % Make sure we're not at the rightmost edge
+    X \= Max_X,
     can_move_east(X, Y, Max_X, Max_Y, Visited),
-    % Call appropriate action based on current orientation
     determine_right_action(Orient, X, Y, Max_X, Max_Y, Action, Knowledge).
 
-% Helper predicate to check if we can move east
 can_move_east(X, Y, Max_X, Max_Y, Visited) :-
     myVisited(Visited),
     forwardStep(X, Y, east, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
     not(member(New_Visited_XY, Visited)).
 
-% Case 1: Already facing east, just move forward
 determine_right_action(east, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     forwardStep(X, Y, east, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -237,30 +210,24 @@ determine_right_action(east, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
                  myPosition(New_X, New_Y, east),
                  myTrail(New_Trail),
                  myVisited(New_Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 2: Facing south, need to turn left
 determine_right_action(south, X, Y, Max_X, Max_Y, turnLeft, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     Knowledge = [gameStarted,
                  myWorldSize(Max_X, Max_Y),
                  myPosition(X, Y, east),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 3: Facing north or west, turn right to eventually face east
 determine_right_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
     Orient \= east,
     Orient \= south,
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     shiftOrientRight(Orient, NewOrient),
     Knowledge = [gameStarted,
@@ -268,32 +235,25 @@ determine_right_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
                  myPosition(X, Y, NewOrient),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Explore - UP
 go_up(Action, Knowledge) :-
-    % Check common conditions first
     not(breeze; stench),
     myWorldSize(Max_X, Max_Y),
     myPosition(X, Y, Orient),
-    Y \= Max_Y,  % Make sure we're not at the top edge
+    Y \= Max_Y,
     can_move_north(X, Y, Max_X, Max_Y, Visited),
-    % Call appropriate action based on current orientation
     determine_up_action(Orient, X, Y, Max_X, Max_Y, Action, Knowledge).
 
-% Helper predicate to check if we can move north
 can_move_north(X, Y, Max_X, Max_Y, Visited) :-
     myVisited(Visited),
     forwardStep(X, Y, north, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
     not(member(New_Visited_XY, Visited)).
 
-% Case 1: Already facing north, just move forward
 determine_up_action(north, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     forwardStep(X, Y, north, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -304,30 +264,24 @@ determine_up_action(north, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
                  myPosition(New_X, New_Y, north),
                  myTrail(New_Trail),
                  myVisited(New_Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 2: Facing east, need to turn left
 determine_up_action(east, X, Y, Max_X, Max_Y, turnLeft, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     Knowledge = [gameStarted,
                  myWorldSize(Max_X, Max_Y),
                  myPosition(X, Y, north),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 3: Facing south or west, turn right to eventually face north
 determine_up_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
     Orient \= north,
     Orient \= east,
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     shiftOrientRight(Orient, NewOrient),
     Knowledge = [gameStarted,
@@ -335,32 +289,25 @@ determine_up_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
                  myPosition(X, Y, NewOrient),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Explore - LEFT
 go_left(Action, Knowledge) :-
-    % Check common conditions first
     not(breeze; stench),
     myWorldSize(Max_X, Max_Y),
     myPosition(X, Y, Orient),
-    X \= 1,  % Make sure we're not at the leftmost edge
+    X \= 1,
     can_move_west(X, Y, Max_X, Max_Y, Visited),
-    % Call appropriate action based on current orientation
     determine_left_action(Orient, X, Y, Max_X, Max_Y, Action, Knowledge).
 
-% Helper predicate to check if we can move west
 can_move_west(X, Y, Max_X, Max_Y, Visited) :-
     myVisited(Visited),
     forwardStep(X, Y, west, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
     not(member(New_Visited_XY, Visited)).
 
-% Case 1: Already facing west, just move forward
 determine_left_action(west, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     forwardStep(X, Y, west, New_X, New_Y),
     New_Visited_XY is (New_Y - 1) * Max_Y + New_X,
@@ -371,30 +318,24 @@ determine_left_action(west, X, Y, Max_X, Max_Y, moveForward, Knowledge) :-
                  myPosition(New_X, New_Y, west),
                  myTrail(New_Trail),
                  myVisited(New_Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 2: Facing north, need to turn left
 determine_left_action(north, X, Y, Max_X, Max_Y, turnLeft, Knowledge) :-
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     Knowledge = [gameStarted,
                  myWorldSize(Max_X, Max_Y),
                  myPosition(X, Y, west),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Case 3: Facing south or east, turn right to eventually face west
 determine_left_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
     Orient \= west,
     Orient \= north,
     myTrail(Trail),
     myVisited(Visited),
-    myVisitedStench(VisitedStench),
     haveGold(NGolds),
     shiftOrientRight(Orient, NewOrient),
     Knowledge = [gameStarted,
@@ -402,71 +343,59 @@ determine_left_action(Orient, X, Y, Max_X, Max_Y, turnRight, Knowledge) :-
                  myPosition(X, Y, NewOrient),
                  myTrail(Trail),
                  myVisited(Visited),
-                 myVisitedStench(VisitedStench),
                  haveGold(NGolds)].
 
-% Go back
-go_to_previous_position(Action, Knowledge) :-
+go_back(Action, Knowledge) :-
 	myWorldSize(Max_X, Max_Y),
 	myPosition(X,Y,Orient),
 	myTrail(Trail),
 	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-
 	haveGold(NGolds),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
 	forwardStep(X, Y, Orient, New_X, New_Y),
 	New_X = X_Old,
 	New_Y = Y_Old,
-	Action = moveForward, % if the same go forward
+	Action = moveForward,
 	Knowledge = [gameStarted,
 			 myWorldSize(Max_X, Max_Y),
 		     myPosition(X_Old,Y_Old,Orient),
 		     myTrail(Trail_Tail),
 			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
 		     haveGold(NGolds)].
 
-go_to_previous_position(Action, Knowledge) :-
-	myWorldSize(Max_X, Max_Y),
-	myPosition(X,Y,Orient),
-	myTrail(Trail),
-	myVisited(Visited),
-	myVisitedStench(VisitedStench),
+get_go_back_state(Max_X, Max_Y, X, Y, Orient, Trail, Visited, NGolds) :-
+    myWorldSize(Max_X, Max_Y),
+    myPosition(X, Y, Orient),
+    myTrail(Trail),
+    myVisited(Visited),
+    haveGold(NGolds).
 
-	haveGold(NGolds),
-	shiftOrientLeft(Orient, NewOrient),
-	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
-	forwardStep(X, Y, NewOrient, New_X, New_Y),
-	New_X = X_Old,
-	New_Y = Y_Old,
-	Action = turnLeft,
-	Knowledge = [gameStarted,
-			 myWorldSize(Max_X, Max_Y),
-		     myPosition(X,Y,NewOrient),
-		     myTrail(Trail),
-			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
-		     haveGold(NGolds)].
+go_back(Action, Knowledge) :-
+    get_go_back_state(Max_X, Max_Y, X, Y, Orient, Trail, Visited, NGolds),
+    shiftOrientLeft(Orient, NewOrient),
+    Trail = [[X_Old, Y_Old] | Trail_Tail],
+    forwardStep(X, Y, NewOrient, New_X, New_Y),
+    New_X = X_Old,
+    New_Y = Y_Old,
+    Action = turnLeft,
+    Knowledge = [gameStarted,
+                myWorldSize(Max_X, Max_Y),
+                myPosition(X, Y, NewOrient),
+                myTrail(Trail),
+                myVisited(Visited),
+                haveGold(NGolds)].
 
-go_to_previous_position(Action, Knowledge) :-
-	myWorldSize(Max_X, Max_Y),
-	myPosition(X,Y,Orient),
-	myTrail(Trail),
-	myVisited(Visited),
-	myVisitedStench(VisitedStench),
-	haveGold(NGolds),
-	shiftOrientRight(Orient, NewOrient),
-	Action = turnRight,
-	Knowledge = [gameStarted,
-			 myWorldSize(Max_X, Max_Y),
-		     myPosition(X,Y,NewOrient),
-		     myTrail(Trail),
-			 myVisited(Visited),
-			 myVisitedStench(VisitedStench),
-		     haveGold(NGolds)].
+go_back(Action, Knowledge) :-
+    get_go_back_state(Max_X, Max_Y, X, Y, Orient, Trail, Visited, NGolds),
+    shiftOrientRight(Orient, NewOrient),
+    Action = turnRight,
+    Knowledge = [gameStarted,
+                myWorldSize(Max_X, Max_Y),
+                myPosition(X, Y, NewOrient),
+                myTrail(Trail),
+                myVisited(Visited),
+                haveGold(NGolds)].
 
-% Basic movment options
 forwardStep(X, Y, east,  New_X, Y) :- New_X is (X+1).
 forwardStep(X, Y, south, X, New_Y) :- New_Y is (Y-1).
 forwardStep(X, Y, west,  New_X, Y) :- New_X is (X-1).
