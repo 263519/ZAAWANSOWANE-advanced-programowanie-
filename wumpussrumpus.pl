@@ -10,7 +10,6 @@ act(Action, Knowledge) :-
 	% To avoid looping on act/2.
 	not(gameStarted),
 	assert(gameStarted),
-		
 	% Creating initial knowledge
 	worldSize(X,Y), % world size
 	assert(myWorldSize(X,Y)), % save to memory
@@ -19,7 +18,6 @@ act(Action, Knowledge) :-
 	assert(myVisited([1])), % visited poles
 	assert(myVisitedStench([])),
 	assert(myGold(0)), % pick up gold
-	assert(wumpusAlive(1)),
 	act(Action, Knowledge).
 
 % Agent actions
@@ -68,7 +66,6 @@ pick_up_gold(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
 	myGold(Gold),
 	Action = grab,	
 	NewGold is Gold + 1,
@@ -78,7 +75,6 @@ pick_up_gold(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(NewGold)].
 
 
@@ -90,7 +86,6 @@ go_back_step(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
 	forwardStep(X, Y, Orient, New_X, New_Y),
 	New_X = X_Old,
@@ -102,7 +97,6 @@ go_back_step(Action, Knowledge) :-
 		     myTrail(Trail_Tail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_back_step(Action, Knowledge) :-
@@ -112,7 +106,6 @@ go_back_step(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
 	shiftOrientLeft(Orient, NewOrient),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
 	forwardStep(X, Y, NewOrient, New_X, New_Y),
@@ -125,7 +118,6 @@ go_back_step(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_back_step(Action, Knowledge) :-
@@ -135,7 +127,6 @@ go_back_step(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
 	shiftOrientRight(Orient, NewOrient),
 	Action = turnRight,
 	Knowledge = [gameStarted,
@@ -144,13 +135,11 @@ go_back_step(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 % Explore
 go_down(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= 1,
@@ -171,12 +160,10 @@ go_down(Action, Knowledge) :-
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_down(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= 1,
@@ -195,12 +182,10 @@ go_down(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_down(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= 1,
@@ -219,12 +204,10 @@ go_down(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= Max_X,
@@ -245,12 +228,11 @@ go_right(Action, Knowledge) :-
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stenchW),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= Max_X,
@@ -269,12 +251,11 @@ go_right(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_right(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= Max_X,
@@ -293,12 +274,11 @@ go_right(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= Max_Y,
@@ -319,12 +299,11 @@ go_up(Action, Knowledge) :-
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= Max_Y,
@@ -343,12 +322,11 @@ go_up(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_up(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	Y \= Max_Y,
@@ -367,12 +345,11 @@ go_up(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= 1,
@@ -393,12 +370,11 @@ go_left(Action, Knowledge) :-
 		     myTrail(New_Trail),
 			 myVisited(New_Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= 1,
@@ -417,12 +393,11 @@ go_left(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_left(Action, Knowledge) :-
-	wumpusAlive(Wumpus),
-	not(breeze;(stench,Wumpus>0)),
+
+	not(breeze;stench),
 	myWorldSize(Max_X,Max_Y),
 	myPosition(X,Y,Orient),
 	X \= 1,
@@ -441,7 +416,6 @@ go_left(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 
@@ -452,7 +426,7 @@ go_to_previous_position(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
+
 	myGold(Gold),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
 	forwardStep(X, Y, Orient, New_X, New_Y),
@@ -465,7 +439,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myTrail(Trail_Tail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_to_previous_position(Action, Knowledge) :-
@@ -474,7 +447,7 @@ go_to_previous_position(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
+
 	myGold(Gold),
 	shiftOrientLeft(Orient, NewOrient),
 	Trail = [ [X_Old,Y_Old] | Trail_Tail ],
@@ -488,7 +461,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 go_to_previous_position(Action, Knowledge) :-
@@ -497,7 +469,6 @@ go_to_previous_position(Action, Knowledge) :-
 	myTrail(Trail),
 	myVisited(Visited),
 	myVisitedStench(VisitedStench),
-	wumpusAlive(Wumpus),
 	myGold(Gold),
 	shiftOrientRight(Orient, NewOrient),
 	Action = turnRight,
@@ -507,7 +478,6 @@ go_to_previous_position(Action, Knowledge) :-
 		     myTrail(Trail),
 			 myVisited(Visited),
 			 myVisitedStench(VisitedStench),
-			 wumpusAlive(Wumpus),
 		     myGold(Gold)].
 
 % Basic movment options
